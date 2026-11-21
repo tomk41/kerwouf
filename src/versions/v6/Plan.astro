@@ -1,0 +1,41 @@
+---
+// Plan photo pleine largeur pour le récit.
+// La photo n'est jamais agrandie au-delà de sa taille d'origine : au-delà, l'espace est
+// rempli par une miniature (32 px) de la même photo, étirée, qui donne un fond flou
+// sans filtre CSS coûteux.
+import { getImage } from 'astro:assets';
+import Photo from '../../components/Photo.astro';
+import { photos, type NomPhoto } from '../../lib/images';
+
+interface Props {
+  nom: NomPhoto;
+  prioritaire?: boolean;
+  /** Position du cadrage (object-position), ex. "50% 70%" */
+  cadrage?: string;
+  /** Hauteur maximale du plan, ex. "88svh" */
+  hauteur?: string;
+  class?: string;
+  alt?: string;
+}
+const { nom, prioritaire = false, cadrage = '50% 50%', hauteur = '88svh', class: classe = '', alt } = Astro.props;
+const photo = photos[nom];
+const plafond = Math.min(photo.src.width, 'maxLargeur' in photo && photo.maxLargeur ? photo.maxLargeur : 1600);
+const hauteurNative = Math.round((photo.src.height / photo.src.width) * plafond);
+const flou = await getImage({ src: photo.src, width: 32, format: 'webp', quality: 50 });
+---
+
+<figure
+  class:list={['plan', classe]}
+  style={`--plan-l: ${plafond}px; --plan-h: ${hauteurNative}px; --plan-hmax: ${hauteur}; background-image: url(${flou.src});`}
+>
+  <Photo
+    nom={nom}
+    alt={alt}
+    prioritaire={prioritaire}
+    max={plafond}
+    sizes={`(min-width: ${plafond}px) ${plafond}px, 100vw`}
+    class="plan__photo"
+    style={`object-position: ${cadrage}`}
+  />
+  <slot />
+</figure>

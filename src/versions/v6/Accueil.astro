@@ -1,0 +1,218 @@
+---
+import Layout from './Layout.astro';
+import Plan from './Plan.astro';
+import Photo from '../../components/Photo.astro';
+import Video from '../../components/Video.astro';
+import Formulaire from '../../components/Formulaire.astro';
+import { c, lienTel, lienSms, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import { photoTemoignage, type NomPhoto } from '../../lib/images';
+
+const s = c.services;
+// Une photo et un cadrage par chapitre du récit
+const plans: { nom: NomPhoto; cadrage: string }[] = [
+  { nom: 'maison', cadrage: '50% 60%' },
+  { nom: 'riviere', cadrage: '50% 55%' },
+  { nom: 'etable', cadrage: '50% 60%' },
+  { nom: 'box', cadrage: '50% 55%' },
+  { nom: 'pre', cadrage: '50% 40%' },
+];
+const total = String(c.recit.chapitres.length).padStart(2, '0');
+---
+
+<Layout accueil>
+  <!-- Ouverture -->
+  <section class="ouverture" aria-labelledby="titre-accroche">
+    <Plan nom="accroche" prioritaire cadrage="30% 75%" hauteur="calc(100svh - 6rem)" class="plan--ouverture">
+      <figcaption class="ouverture__texte">
+        <p class="sur">{c.accroche.surtitre}</p>
+        <h1 id="titre-accroche">{c.accroche.titre}</h1>
+        <p class="ouverture__sous">{c.accroche.sous_titre}</p>
+        <div class="actions">
+          <a class="bouton" href={lienTel}>{c.accroche.bouton_principal}</a>
+          <a class="bouton bouton--ligne" href="#recit">{c.recit.titre} ↓</a>
+        </div>
+      </figcaption>
+    </Plan>
+  </section>
+
+  <section class="chapeau" aria-label={c.libelles.en_bref}>
+    <div class="etroit">
+      <p class="chapeau__texte">{c.accroche.texte}</p>
+      <ul class="atouts">{c.accroche.atouts.map((a) => <li>{a}</li>)}</ul>
+    </div>
+  </section>
+
+  <!-- Le récit -->
+  <section id="recit" class="recit" aria-labelledby="titre-recit">
+    <header class="etroit recit__tete">
+      <h2 id="titre-recit">{c.recit.titre}</h2>
+      <p>{c.recit.intro}</p>
+    </header>
+    <ol class="recit__liste">
+      {c.recit.chapitres.map((ch, i) => (
+        <li class="chapitre">
+          <Plan nom={plans[i].nom} cadrage={plans[i].cadrage}>
+            <figcaption class="chapitre__texte">
+              <p class="chapitre__num"><span>{String(i + 1).padStart(2, '0')}</span> / {total}</p>
+              <h3>{ch.titre}</h3>
+              <p>{ch.texte}</p>
+            </figcaption>
+          </Plan>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="section section--claire" aria-labelledby="titre-services">
+    <div class="cadre">
+      <header class="tete">
+        <p class="sur sur--fonce">{c.libelles.services}</p>
+        <h2 id="titre-services">{s.titre}</h2>
+        <p>{s.intro}</p>
+      </header>
+
+      <div class="formules">
+        <div>
+          <h3>{s.sejours.titre}</h3>
+          <p class="formules__sous">{s.sejours.sous_titre}</p>
+          <p>{s.sejours.intro}</p>
+          {s.sejours.offres.map((o) => (
+            <article class="formule">
+              <div class="formule__tete"><h4>{o.titre}</h4><p class="formule__prix"><strong>{o.prix}</strong> {o.unite}</p></div>
+              <p class="formule__periode">{o.periode}</p>
+              <p>{o.texte}</p>
+              <p class="petit">{o.arrivee_depart}</p>
+              <p class="petit">{o.navette}</p>
+            </article>
+          ))}
+          <ul class="liste">{s.sejours.inclus.map((x) => <li>{x}</li>)}</ul>
+        </div>
+        <div>
+          <h3>{s.journee.titre}</h3>
+          <p class="formules__sous">{s.journee.sous_titre} · {s.journee.horaires}</p>
+          <p>{s.journee.intro}</p>
+          {s.journee.offres.map((o) => (
+            <article class="formule">
+              <div class="formule__tete"><h4>{o.titre}</h4></div>
+              <p class="formule__periode">{o.accroche}</p>
+              <p>{o.texte}</p>
+              <p class="petit">{o.inclus.join(' · ')}</p>
+              <p class="petit">{o.acces}</p>
+              <ul class="formule__tarifs">{o.tarifs.map((t) => <li><strong>{t.prix}</strong> {t.libelle}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <article class="woufmobil" aria-labelledby="titre-wm">
+        <Photo nom="woufmobil" sizes="(min-width: 64rem) 420px, 85vw" max={800} class="woufmobil__img" />
+        <div>
+          <p class="sur sur--fonce">{s.woufmobil.slogan}</p>
+          <h3 id="titre-wm">{s.woufmobil.titre}</h3>
+          <p>{s.woufmobil.texte}</p>
+          <ul class="liste">{s.woufmobil.trajets.map((t) => <li><strong>{t.sens}</strong> {t.quand}</li>)}</ul>
+          <p class="formule__prix">{s.woufmobil.mention_prix} : <strong>{s.woufmobil.prix}</strong> {s.woufmobil.unite}</p>
+          <ul class="liste">{s.woufmobil.securite.map((x) => <li>{x}</li>)}</ul>
+          <a class="bouton bouton--sombre" href={lienTel}>{s.woufmobil.bouton}</a>
+        </div>
+      </article>
+      <p class="regle">{c.reservation.regle}</p>
+    </div>
+  </section>
+
+  <!-- Nivillac -->
+  <section id="nivillac" class="nivillac" aria-labelledby="titre-nivillac">
+    <Plan nom="verger" cadrage="50% 70%" hauteur="70svh" />
+    <div class="cadre nivillac__in">
+      <header class="tete">
+        <p class="sur">{c.nivillac.sous_titre}</p>
+        <h2 id="titre-nivillac">{c.nivillac.titre}</h2>
+      </header>
+      <div class="colonnes">{c.nivillac.paragraphes.map((p) => <p>{p}</p>)}</div>
+      <ul class="chiffres">{c.nivillac.chiffres.map((ch) => <li><strong>{ch.valeur}</strong><span>{ch.libelle}</span></li>)}</ul>
+    </div>
+  </section>
+
+  <!-- Journée type + vidéo -->
+  <section class="section section--claire" aria-labelledby="titre-journee">
+    <div class="cadre journee">
+      <div>
+        <h2 id="titre-journee">{c.journee_type.titre}</h2>
+        <p>{c.journee_type.intro}</p>
+        <ol class="frise">
+          {c.journee_type.etapes.map((e) => <li><p class="frise__moment">{e.moment}</p><h3>{e.titre}</h3><p>{e.texte}</p></li>)}
+        </ol>
+      </div>
+      <div class="journee__video">
+        <Video sizes="(min-width: 64rem) 45vw, 100vw" />
+        <h3>{s.sejours.video.titre}</h3>
+        <p>{s.sejours.video.texte}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Qui suis-je -->
+  <section id="qui-suis-je" class="section" aria-labelledby="titre-qui">
+    <div class="cadre qui">
+      <Photo nom="theotine" sizes="(min-width: 64rem) 45vw, 100vw" max={800} class="qui__photo" />
+      <div>
+        <p class="sur">{c.qui.accroche}</p>
+        <h2 id="titre-qui">{c.qui.titre}</h2>
+        {c.qui.paragraphes.map((p) => <p>{p}</p>)}
+        <h3>{c.qui.formation.titre}</h3>
+        <p>{c.qui.formation.texte}</p>
+        <h3>{c.qui.experiences.titre}</h3>
+        <div class="xp">
+          {c.qui.experiences.groupes.map((g) => (
+            <div><h4>{g.titre}</h4><ul>{g.items.map((x) => <li>{x.texte} <span>{x.duree}</span></li>)}</ul></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Témoignages -->
+  <section id="temoignages" class="section section--claire" aria-labelledby="titre-avis">
+    <div class="cadre">
+      <header class="tete tete--centre">
+        <h2 id="titre-avis">{c.temoignages.titre}</h2>
+        <p>{c.temoignages.intro}</p>
+      </header>
+      <div class="avis">
+        {c.temoignages.items.map((t) => (
+          <figure class="avis__item">
+            <Photo nom={photoTemoignage[t.chien]} sizes="(min-width: 64rem) 30vw, 100vw" max={800} class="avis__photo" />
+            <blockquote><p>« {t.citation} »</p></blockquote>
+            <figcaption><strong>{t.chien}</strong> · {t.prestation}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section contact-section" aria-labelledby="titre-contact">
+    <div class="cadre contact">
+      <div>
+        <p class="sur">{c.libelles.contact}</p>
+        <h2 id="titre-contact">{c.contact.titre}</h2>
+        <p>{c.contact.texte}</p>
+        <p class="contact__tel"><a href={lienTel}>{telAffiche}</a></p>
+        <p>{c.contact.disponibilite}</p>
+        <div class="actions">
+          <a class="bouton" href={lienSms}>{c.contact.bouton_sms}</a>
+          <a class="bouton bouton--ligne" href={lienMail}>{c.contact.bouton_email}</a>
+        </div>
+        <p class="contact__adresse">{adresseLigne}</p>
+        <p class="regle regle--sombre">{c.reservation.regle}</p>
+        <p class="signature">{c.contact.signature}</p>
+      </div>
+      <div class="contact__form">
+        <h3>{c.contact.formulaire.titre}</h3>
+        <p>{c.contact.formulaire.intro}</p>
+        <Formulaire version="v6" bouton="bouton bouton--sombre" />
+      </div>
+    </div>
+  </section>
+</Layout>

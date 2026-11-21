@@ -1,0 +1,13 @@
+---
+import Layout from '../../versions/v6/Layout.astro';
+import { Content, frontmatter } from '../../../content/confidentialite.md';
+---
+
+<Layout titre={frontmatter.titre}>
+  <div class="page-texte">
+    <article class="kw-prose">
+      <h1>{frontmatter.titre}</h1>
+      <Content />
+    </article>
+  </div>
+</Layout>
