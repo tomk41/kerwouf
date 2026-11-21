@@ -1,0 +1,43 @@
+---
+import { lien } from '../../lib/chemins';
+import Squelette from '../../components/Squelette.astro';
+import Navigation from '../../components/Navigation.astro';
+import Icone from '../../components/Icone.astro';
+import { c, lienTel, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import '@fontsource/caprasimo/latin-400.css';
+import '@fontsource-variable/karla';
+import './styles.css';
+
+interface Props { titre?: string; description?: string; accueil?: boolean }
+const { titre, description, accueil = false } = Astro.props;
+const prefixe = accueil ? '' : lien('v8/');
+---
+
+<Squelette n={8} titre={titre ? `${titre} – Ker Wouf` : undefined} description={description} jsonLd={accueil}>
+  <header slot="entete" class="entete">
+    <div class="cadre entete__in">
+      <a class="marque" href={lien('v8/')}>{c.site.nom}</a>
+      <Navigation prefixe={prefixe} />
+      <a class="bouton bouton--petit" href={lienTel} aria-label={`Appeler le ${telAffiche}`}>
+        <Icone nom="tel" taille={18} /><span class="entete__num">{telAffiche}</span>
+      </a>
+    </div>
+    <div class="rayures" aria-hidden="true"></div>
+  </header>
+
+  <slot />
+
+  <footer slot="pied" class="pied">
+    <div class="rayures" aria-hidden="true"></div>
+    <div class="cadre pied__in">
+      <p class="pied__nom">{c.site.nom}</p>
+      <p>{c.site.baseline}</p>
+      <address>{adresseLigne}<br /><a href={lienTel}>{telAffiche}</a> · <a href={lienMail}>{c.site.email}</a></address>
+      <p class="pied__liens">
+        <a href={lien('v8/mentions-legales/')}>{c.pied_de_page.mentions}</a>
+        <a href={lien('v8/confidentialite/')}>{c.pied_de_page.confidentialite}</a>
+      </p>
+      <p class="pied__copy">© 2026 {c.site.nom}</p>
+    </div>
+  </footer>
+</Squelette>

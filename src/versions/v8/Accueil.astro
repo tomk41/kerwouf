@@ -1,0 +1,209 @@
+---
+import Layout from './Layout.astro';
+import Illustration from './Illustration.astro';
+import Photo from '../../components/Photo.astro';
+import Icone from '../../components/Icone.astro';
+import Video from '../../components/Video.astro';
+import Formulaire from '../../components/Formulaire.astro';
+import { c, lienTel, lienSms, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import { photoTemoignage } from '../../lib/images';
+
+const s = c.services;
+---
+
+<Layout accueil>
+  <!-- Accroche -->
+  <section class="accroche" aria-labelledby="titre-accroche">
+    <div class="cadre accroche__in">
+      <div class="accroche__texte">
+        <div class="tampons">
+          <p class="tampon tampon--moutarde">{c.libelles.badge_depuis}</p>
+          <p class="tampon tampon--olive">{c.libelles.badge_capacite}</p>
+        </div>
+        <p class="sur">{c.accroche.surtitre}</p>
+        <h1 id="titre-accroche">{c.accroche.titre}</h1>
+        <p class="accroche__sous">{c.accroche.sous_titre}</p>
+        <p>{c.accroche.texte}</p>
+        <div class="actions">
+          <a class="bouton" href={lienTel}><Icone nom="tel" taille={20} />{c.accroche.bouton_principal}</a>
+          <a class="bouton bouton--creme" href="#services">{c.accroche.bouton_secondaire}</a>
+        </div>
+      </div>
+      <div class="accroche__visuel kw-accroche-max">
+        <Illustration nom="arcs" class="accroche__arcs" />
+        <Photo nom="accroche" prioritaire sizes="(min-width: 64rem) 40vw, 90vw" class="arche accroche__photo" />
+      </div>
+    </div>
+    <ul class="cadre tickets">{c.accroche.atouts.map((a) => <li>{a}</li>)}</ul>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="section" aria-labelledby="titre-services">
+    <div class="cadre">
+      <header class="tete tete--illu">
+        <Illustration nom="chien" class="tete__illu" />
+        <div>
+          <p class="sur">{c.libelles.services}</p>
+          <h2 id="titre-services">{s.titre}</h2>
+          <p>{s.intro}</p>
+        </div>
+      </header>
+
+      <h3 class="intertitre"><span>{s.sejours.titre}</span> {s.sejours.sous_titre}</h3>
+      <p class="intro-bloc">{s.sejours.intro}</p>
+      <div class="grille-2">
+        {s.sejours.offres.map((o) => (
+          <article class="carte carte--olive">
+            <p class="carte__periode">{o.periode}</p>
+            <h4>{o.titre}</h4>
+            <p>{o.texte}</p>
+            <p class="carte__ligne"><Icone nom="horloge" taille={18} />{o.arrivee_depart}</p>
+            <p class="carte__ligne"><Icone nom="navette" taille={18} />{o.navette}</p>
+            <p class="etiquette-prix"><strong>{o.prix}</strong><span>{o.unite}</span></p>
+          </article>
+        ))}
+      </div>
+      <ul class="liste-etoiles">{s.sejours.inclus.map((x) => <li>{x}</li>)}</ul>
+
+      <h3 class="intertitre"><span>{s.journee.titre}</span> {s.journee.sous_titre}</h3>
+      <p class="intro-bloc">{s.journee.intro} <strong>{s.journee.horaires}.</strong></p>
+      <div class="grille-2">
+        {s.journee.offres.map((o) => (
+          <article class="carte">
+            <p class="carte__periode carte__periode--orange">{o.accroche}</p>
+            <h4>{o.titre}</h4>
+            <p>{o.texte}</p>
+            <ul class="liste-etoiles">{o.inclus.map((x) => <li>{x}</li>)}</ul>
+            <p class="carte__petit">{o.acces}</p>
+            <ul class="tarifs">{o.tarifs.map((t) => <li><strong>{t.prix}</strong><span>{t.libelle}</span></li>)}</ul>
+          </article>
+        ))}
+      </div>
+
+      <article class="affiche" aria-labelledby="titre-wm">
+        <div class="affiche__texte">
+          <p class="sur sur--brun">{s.woufmobil.slogan}</p>
+          <h3 id="titre-wm">{s.woufmobil.titre}</h3>
+          <p>{s.woufmobil.texte}</p>
+          <ul class="trajets">{s.woufmobil.trajets.map((t) => <li><strong>{t.sens}</strong> {t.quand}</li>)}</ul>
+          <ul class="liste-etoiles">{s.woufmobil.securite.map((x) => <li>{x}</li>)}</ul>
+          <a class="bouton" href={lienTel}>{s.woufmobil.bouton}</a>
+        </div>
+        <div class="affiche__visuel">
+          <Photo nom="woufmobil" sizes="(min-width: 64rem) 360px, 80vw" max={800} />
+          <p class="tampon tampon--orange"><span>{s.woufmobil.mention_prix}</span> <strong>{s.woufmobil.prix}</strong> <span>{s.woufmobil.unite}</span></p>
+        </div>
+      </article>
+
+      <p class="regle"><Icone nom="info" taille={22} /><span>{c.reservation.regle}</span></p>
+    </div>
+  </section>
+
+  <!-- Nivillac -->
+  <section id="nivillac" class="section section--moutarde" aria-labelledby="titre-nivillac">
+    <div class="cadre">
+      <header class="tete tete--illu">
+        <Illustration nom="maison" class="tete__illu tete__illu--maison" />
+        <div>
+          <p class="sur sur--brun">{c.nivillac.sous_titre}</p>
+          <h2 id="titre-nivillac">{c.nivillac.titre}</h2>
+        </div>
+      </header>
+      <div class="nivillac">
+        <div class="nivillac__texte">{c.nivillac.paragraphes.map((p) => <p>{p}</p>)}</div>
+        <div class="arches">
+          <Photo nom="maison" sizes="(min-width: 64rem) 14rem, 45vw" max={800} class="arche" />
+          <Photo nom="etable" sizes="(min-width: 64rem) 14rem, 45vw" max={800} class="arche" />
+          <Photo nom="box" sizes="(min-width: 64rem) 14rem, 45vw" max={800} class="arche" />
+          <Photo nom="verger" sizes="(min-width: 64rem) 14rem, 45vw" max={800} class="arche" />
+        </div>
+      </div>
+      <ul class="medailles">{c.nivillac.chiffres.map((ch) => <li><strong>{ch.valeur}</strong><span>{ch.libelle}</span></li>)}</ul>
+    </div>
+  </section>
+
+  <!-- Journée type -->
+  <section class="section" aria-labelledby="titre-journee">
+    <div class="cadre journee">
+      <div>
+        <Illustration nom="chemin" class="journee__illu" />
+        <h2 id="titre-journee">{c.journee_type.titre}</h2>
+        <p class="intro-bloc">{c.journee_type.intro}</p>
+        <div class="journee__video">
+          <Video sizes="(min-width: 64rem) 40vw, 100vw" />
+          <h3>{s.sejours.video.titre}</h3>
+          <p>{s.sejours.video.texte}</p>
+        </div>
+      </div>
+      <ol class="arrets">
+        {c.journee_type.etapes.map((e) => <li><p class="arrets__moment">{e.moment}</p><h3>{e.titre}</h3><p>{e.texte}</p></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Qui suis-je -->
+  <section id="qui-suis-je" class="section section--olive" aria-labelledby="titre-qui">
+    <div class="cadre qui">
+      <div class="qui__visuel">
+        <Photo nom="theotine" sizes="(min-width: 64rem) 30vw, 85vw" max={800} class="arche qui__photo" />
+        <p class="tampon tampon--moutarde qui__tampon">{c.libelles.badge_depuis}</p>
+      </div>
+      <div>
+        <p class="sur sur--creme">{c.qui.accroche}</p>
+        <h2 id="titre-qui">{c.qui.titre}</h2>
+        {c.qui.paragraphes.map((p) => <p>{p}</p>)}
+        <div class="diplome"><h3>{c.qui.formation.titre}</h3><p>{c.qui.formation.texte}</p></div>
+        <h3 class="qui__xp">{c.qui.experiences.titre}</h3>
+        <div class="xp">
+          {c.qui.experiences.groupes.map((g) => (
+            <div><h4>{g.titre}</h4><ul>{g.items.map((x) => <li>{x.texte} <span>· {x.duree}</span></li>)}</ul></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Témoignages -->
+  <section id="temoignages" class="section" aria-labelledby="titre-avis">
+    <div class="cadre">
+      <header class="tete tete--centre">
+        <h2 id="titre-avis">{c.temoignages.titre}</h2>
+        <p>{c.temoignages.intro}</p>
+      </header>
+      <div class="avis">
+        {c.temoignages.items.map((t) => (
+          <figure class="carte avis__carte">
+            <Photo nom={photoTemoignage[t.chien]} sizes="96px" max={400} class="avis__photo" />
+            <blockquote><p>« {t.citation} »</p></blockquote>
+            <figcaption><strong>{t.chien}</strong><span>{t.prestation}</span></figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section section--orange" aria-labelledby="titre-contact">
+    <div class="cadre contact">
+      <div>
+        <p class="sur sur--creme">{c.libelles.contact}</p>
+        <h2 id="titre-contact">{c.contact.titre}</h2>
+        <p>{c.contact.texte}</p>
+        <p class="contact__tel"><a href={lienTel}>{telAffiche}</a></p>
+        <p>{c.contact.disponibilite}</p>
+        <div class="actions">
+          <a class="bouton bouton--creme" href={lienSms}><Icone nom="sms" taille={20} />{c.contact.bouton_sms}</a>
+          <a class="bouton bouton--creme" href={lienMail}><Icone nom="mail" taille={20} />{c.contact.bouton_email}</a>
+        </div>
+        <p class="contact__adresse">{adresseLigne}</p>
+        <p class="regle regle--creme"><Icone nom="info" taille={22} /><span>{c.reservation.regle}</span></p>
+        <p class="signature">{c.contact.signature}</p>
+      </div>
+      <div class="carte contact__form">
+        <h3>{c.contact.formulaire.titre}</h3>
+        <p>{c.contact.formulaire.intro}</p>
+        <Formulaire version="v8" bouton="bouton" />
+      </div>
+    </div>
+  </section>
+</Layout>
