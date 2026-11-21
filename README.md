@@ -122,14 +122,20 @@ On peut aussi relancer un déploiement à la main : **Actions → Déploiement b
 
 La bêta est servie dans un **sous-dossier** du site actuel, `https://kerwouf.fr/beta/`, car l'offre d'hébergement OVH ne permet pas de second site. Il n'y a donc ni sous-domaine ni configuration DNS à faire.
 
-### 6.1 Utilisateur FTP limité au dossier `www/beta`
+### 6.1 Accès FTP : le login principal de l'hébergement
 
-Pour que le déploiement automatique ne puisse jamais toucher au WordPress, on crée un utilisateur FTP qui ne voit **que** `www/beta`. Dans l'espace client OVHcloud :
+L'offre OVH ne permet pas de créer un utilisateur FTP secondaire : le déploiement utilise donc le **login FTP principal**. Sa racine est celle de tout l'hébergement : le site en production est dans `www/`, la bêta dans `www/beta/`.
 
-1. **Web Cloud → Hébergements → (l'hébergement de kerwouf.fr) → onglet « FTP - SSH »**.
-2. Si le dossier n'existe pas encore, le créer avec le login FTP principal (FileZilla ou l'explorateur FTP d'OVH) : `www/beta/`.
-3. **« Ajouter un utilisateur »** : choisir un identifiant (ex. `kerwouf-beta`), **dossier racine : `www/beta`**, droits **lecture et écriture**, puis définir un mot de passe solide.
-4. Vérifier avec FileZilla (protocole « FTP explicite sur TLS ») : à la connexion, ce nouvel utilisateur doit arriver directement dans le dossier `beta` vide, sans voir `www` ni les fichiers WordPress.
+Dans l'espace client OVHcloud : **Web Cloud → Hébergements → (l'hébergement de kerwouf.fr) → onglet « FTP - SSH »**. On y trouve :
+
+- le **serveur FTP** (ex. `ftp.cluster0XX.hosting.ovh.net`) ;
+- le **login principal** ;
+- le **mot de passe**. S'il est perdu, utiliser « Modifier le mot de passe » : attention, cela change aussi l'accès FTP habituel, à mettre à jour partout où il sert.
+
+Si le dossier `www/beta/` n'existe pas encore, l'outil de déploiement le crée au premier envoi. On peut aussi le créer avec FileZilla (protocole « FTP explicite sur TLS »).
+
+> ⚠️ **Ne jamais modifier `server-dir` (variable `DOSSIER_FTP`) dans `.github/workflows/deploy.yml` sans vérifier.**
+> Avec le login principal, l'outil peut écrire partout sur l'hébergement. La valeur doit rester exactement `./www/beta/`, avec la barre finale. Une valeur comme `./` ou `./www/` enverrait la bêta par-dessus le site en production. Le workflow contient un garde-fou qui refuse toute autre valeur : ne pas le retirer.
 
 ### 6.2 Envoi d'e-mails par script (formulaire de contact)
 
@@ -146,10 +152,10 @@ Sur GitHub : **Settings → Secrets and variables → Actions → New repository
 | Secret | Valeur | Où la trouver chez OVH |
 |---|---|---|
 | `FTP_SERVER` | ex. `ftp.cluster0XX.hosting.ovh.net` | Hébergement → Informations générales → « Serveur FTP » |
-| `FTP_USER` | l'identifiant de l'utilisateur **limité à `www/beta`** (point 6.1) | onglet « FTP - SSH » |
-| `FTP_PASSWORD` | son mot de passe | celui choisi au point 6.1 |
+| `FTP_USER` | le **login FTP principal** | onglet « FTP - SSH » |
+| `FTP_PASSWORD` | son mot de passe | onglet « FTP - SSH » (point 6.1) |
 
-Aucun identifiant n'est écrit dans le code. Comme l'utilisateur FTP a `www/beta` pour racine, le workflow envoie dans `./` (`server-dir: ./`). Avec le login FTP principal, il faudrait `./www/beta/`, mais c'est déconseillé : une erreur de chemin pourrait alors toucher le WordPress.
+Aucun identifiant n'est écrit dans le code. Le workflow envoie uniquement le contenu de `dist/` (le site construit, jamais les sources) dans `./www/beta/`. Le mode `dangerous-clean-slate`, qui viderait le dossier avant l'envoi, est désactivé. Les fichiers `.git*`, `node_modules`, `.env*` et les sources (`.astro`, `.ts`, `.md`) sont exclus. L'outil ne supprime que des fichiers qu'il a lui-même envoyés, et seulement dans `www/beta/`.
 
 > Le premier déploiement envoie tout le site, puis seuls les fichiers modifiés partent. L'outil garde la liste des fichiers envoyés dans `www/beta/.ftp-deploy-sync-state.json` : ne pas le supprimer (il est protégé par le `.htaccess`).
 
@@ -186,8 +192,8 @@ Exemple avec la version 3 choisie. Le nouveau site remplacera le WordPress à la
    - `public/.htaccess` : supprimer la ligne `X-Robots-Tag` ;
    - créer `public/robots.txt` : `User-agent: *` / `Allow: /` / `Sitemap: https://www.kerwouf.fr/sitemap-index.xml`.
 5. **Sitemap** : `npx astro add sitemap` (il utilise la valeur `site` de `astro.config.mjs`).
-6. **Déployer vers `www/`** : il faut un accès FTP dont la racine couvre `www` (le login principal avec `server-dir: ./www/`, ou un utilisateur dédié dont la racine est `www`, avec `server-dir: ./`). Mettre à jour `FTP_USER`, `FTP_PASSWORD` et `server-dir` dans `.github/workflows/deploy.yml`. Au premier envoi, l'outil ajoute ses fichiers sans effacer ceux de WordPress. Une fois le nouveau site vérifié, supprimer par FTP les fichiers WordPress restants (`wp-*`, `index.php`, l'ancien `.htaccess` WordPress, etc.) et le dossier `www/beta/`. La sauvegarde de l'étape 1 est là en cas de problème.
-7. Vérifier le formulaire, le HTTPS de `www.kerwouf.fr` et la redirection depuis `kerwouf.fr`, puis déclarer le sitemap dans Google Search Console. Supprimer enfin l'utilisateur FTP limité à `www/beta`.
+6. **Déployer vers `www/`** : c'est le seul moment où l'on modifie `DOSSIER_FTP` dans `.github/workflows/deploy.yml`. Mettre `./www/`, et adapter le garde-fou (étape « Vérifier le dossier de destination ») à cette nouvelle valeur. Relire deux fois avant de fusionner : à partir de là, le déploiement écrit dans le site en production. Au premier envoi, l'outil ajoute ses fichiers sans effacer ceux de WordPress. Une fois le nouveau site vérifié, supprimer par FTP les fichiers WordPress restants (`wp-*`, `index.php`, l'ancien `.htaccess` WordPress, etc.) et le dossier `www/beta/`. La sauvegarde de l'étape 1 est là en cas de problème.
+7. Vérifier le formulaire, le HTTPS de `www.kerwouf.fr` et la redirection depuis `kerwouf.fr`, puis déclarer le sitemap dans Google Search Console.
 
 ## 8. Pour les développeurs
 

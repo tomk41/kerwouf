@@ -1,6 +1,7 @@
 # Déploiement de la bêta sur https://kerwouf.fr/beta/ (hébergement mutualisé OVH, FTPS)
 # Déclenché à chaque push sur main, ou à la main depuis l'onglet Actions.
 # Ne touche QUE le dossier www/beta/. Le WordPress actuel (reste de www/) n'est jamais modifié.
+# Utilise le login FTP principal de l'hébergement (pas d'utilisateur FTP secondaire chez OVH).
 
 name: Déploiement bêta
 
@@ -21,6 +22,9 @@ jobs:
   deploiement:
     name: Construire et envoyer sur OVH
     runs-on: ubuntu-latest
+    env:
+      # Dossier de destination sur le FTP (login principal : racine = hébergement entier)
+      DOSSIER_FTP: ./www/beta/
     steps:
       - name: Récupérer le code
         uses: actions/checkout@v4
@@ -45,6 +49,12 @@ jobs:
           done
           grep -q 'noindex' dist/index.html || { echo "::error::meta noindex absente"; exit 1; }
 
+      # Garde-fou : le login FTP principal voit TOUT l'hébergement, y compris le site
+      # en production dans www/. On refuse de déployer ailleurs que dans ./www/beta/.
+      - name: Vérifier le dossier de destination
+        run: |
+          test "$DOSSIER_FTP" = "./www/beta/" || { echo "::error::server-dir doit être ./www/beta/ (reçu : $DOSSIER_FTP)"; exit 1; }
+
       - name: Envoyer dist/ vers www/beta/ (FTPS)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -53,8 +63,26 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           port: 21
+          # Seul le site construit est envoyé : jamais les sources du dépôt.
           local-dir: ./dist/
-          # L'utilisateur FTP des secrets est limité à www/beta : c'est sa racine, d'où ./
-          # Avec le login FTP principal de l'hébergement, ce serait ./www/beta/
-          server-dir: ./
+          # Login FTP PRINCIPAL : sa racine est celle de l'hébergement (www/ = site en production).
+          # La bêta va dans ./www/beta/ (barre finale obligatoire). NE JAMAIS modifier cette
+          # valeur sans vérifier : ./ ou ./www/ toucherait au site en production.
+          # L'outil ne crée, remplace ou supprime des fichiers QUE dans ce dossier, et ne
+          # supprime que ceux qu'il a lui-même envoyés (liste dans .ftp-deploy-sync-state.json).
+          server-dir: ${{ env.DOSSIER_FTP }}
+          # Surtout pas true : effacerait tout le contenu de server-dir avant l'envoi.
           dangerous-clean-slate: false
+          # Remplace la liste par défaut : on garde ses entrées (.git*, node_modules) et on
+          # ajoute les fichiers de sources et d'environnement, au cas où ils se glisseraient dans dist/.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.env*
+            **/*.astro
+            **/*.ts
+            **/*.tsx
+            **/*.map
+            **/*.md
+            **/.DS_Store
