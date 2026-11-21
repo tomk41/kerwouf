@@ -1,4 +1,5 @@
 ---
+import { lien } from '../../lib/chemins';
 import Squelette from '../../components/Squelette.astro';
 import Navigation from '../../components/Navigation.astro';
 import { c, lienTel, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
@@ -8,7 +9,7 @@ import './styles.css';
 
 interface Props { titre?: string; description?: string; accueil?: boolean }
 const { titre, description, accueil = false } = Astro.props;
-const prefixe = accueil ? '' : '/v5/';
+const prefixe = accueil ? '' : lien('v5/');
 ---
 
 <Squelette n={5} titre={titre ? `${titre} – Ker Wouf` : undefined} description={description} jsonLd={accueil}>
@@ -17,7 +18,7 @@ const prefixe = accueil ? '' : '/v5/';
       <a class="entete__tel" href={lienTel} aria-label={`Appeler le ${telAffiche}`}>
         <span class="entete__tel-num">{telAffiche}</span><span class="entete__tel-court" aria-hidden="true">Appeler</span>
       </a>
-      <a class="marque" href="/v5/">{c.site.nom}</a>
+      <a class="marque" href={lien('v5/')}>{c.site.nom}</a>
       <Navigation prefixe={prefixe} />
     </div>
   </header>
@@ -31,7 +32,7 @@ const prefixe = accueil ? '' : '/v5/';
       <div class="pied__cols">
         <address>{adresseLigne}</address>
         <p><a href={lienTel}>{telAffiche}</a> · <a href={lienMail}>{c.site.email}</a></p>
-        <p><a href="/v5/mentions-legales/">{c.pied_de_page.mentions}</a> · <a href="/v5/confidentialite/">{c.pied_de_page.confidentialite}</a></p>
+        <p><a href={lien('v5/mentions-legales/')}>{c.pied_de_page.mentions}</a> · <a href={lien('v5/confidentialite/')}>{c.pied_de_page.confidentialite}</a></p>
       </div>
       <p class="pied__copy">© 2026 {c.site.nom}</p>
     </div>

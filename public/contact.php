@@ -2,7 +2,7 @@
 /**
  * Formulaire de contact Ker Wouf (bêta).
  * Reçoit le POST des 5 versions, valide, envoie un e-mail à Ker Wouf,
- * puis redirige vers /vN/merci/ (ou vers /vN/?erreur=…#contact).
+ * puis redirige vers /beta/vN/merci/ (ou vers /beta/vN/?erreur=…#contact).
  * Compatible PHP 7.4 et 8.x (hébergement mutualisé OVH).
  */
 
@@ -10,6 +10,7 @@ const DESTINATAIRE = 'kerwouf@gmail.com';
 const EXPEDITEUR = 'no-reply@kerwouf.fr';     // doit être sur le domaine kerwouf.fr
 const NOM_EXPEDITEUR = 'Site Ker Wouf (bêta)';
 const VERSIONS = ['v1', 'v2', 'v3', 'v4', 'v5'];
+const BASE = '/beta';                         // préfixe du site (base dans astro.config.mjs)
 
 function rediriger(string $chemin): void
 {
@@ -45,12 +46,12 @@ function entete_utf8(string $s): string
 mb_internal_encoding('UTF-8');
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-    rediriger('/');
+    rediriger(BASE . '/');
 }
 
 $version = isset($_POST['version']) && in_array($_POST['version'], VERSIONS, true) ? $_POST['version'] : 'v1';
-$merci = "/$version/merci/";
-$erreur = "/$version/?erreur=";
+$merci = BASE . "/$version/merci/";
+$erreur = BASE . "/$version/?erreur=";
 
 // Piège anti-spam : un robot remplit le champ caché. On fait comme si tout allait bien.
 if (!empty($_POST['site_web'])) {

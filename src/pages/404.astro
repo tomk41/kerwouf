@@ -1,9 +1,10 @@
 ---
+import { lien } from '../lib/chemins';
 import Neutre from '../layouts/Neutre.astro';
 ---
 
 <Neutre titre="Page introuvable – Ker Wouf (bêta)">
   <h1>Oups, cette page n’existe pas</h1>
   <p>Le lien est peut-être incomplet, ou la page a été déplacée.</p>
-  <p><a href="/">Revenir à la page de choix des versions</a></p>
+  <p><a href={lien('')}>Revenir à la page de choix des versions</a></p>
 </Neutre>

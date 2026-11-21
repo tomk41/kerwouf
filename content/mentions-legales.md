@@ -4,7 +4,7 @@ titre: "Mentions légales"
 
 ## Éditrice du site
 
-**Ker Wouf** est l’enseigne de Théotine, entrepreneure individuelle.
+Théotine Henique, entrepreneure individuelle, enseigne **Ker Wouf**.
 
 - Adresse : 19 Le Couédelo, 56130 Nivillac
 - Téléphone : [06 75 81 70 92](tel:+33675817092)
@@ -13,7 +13,7 @@ titre: "Mentions légales"
 
 ## Directrice de la publication
 
-Théotine, en qualité d’entrepreneure individuelle.
+Théotine Henique.
 
 ## Hébergeur
 

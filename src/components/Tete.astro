@@ -1,4 +1,5 @@
 ---
+import { lien } from '../lib/chemins';
 // <head> commun : SEO, Open Graph, favicon, JSON-LD LocalBusiness, noindex (bêta).
 import { getImage } from 'astro:assets';
 import { c } from '../lib/contenu';
@@ -18,7 +19,7 @@ if (description.length >= 160) {
   throw new Error(`Meta description trop longue (${description.length} caractères) : ${description}`);
 }
 
-const site = Astro.site ?? new URL('https://beta.kerwouf.fr');
+const site = Astro.site ?? new URL('https://kerwouf.fr');
 const url = new URL(Astro.url.pathname, site).href;
 const og = await getImage({ src: photos.accroche.src, width: 1200, height: 630, fit: 'cover', format: 'jpeg', quality: 80 });
 const ogUrl = new URL(og.src, site).href;
@@ -56,7 +57,7 @@ const donnees = {
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{titre}</title>
 <meta name="description" content={description} />
-<!-- Bêta : ne pas indexer (voir aussi robots.txt et .htaccess) -->
+<!-- Bêta : ne pas indexer (voir aussi l'en-tête X-Robots-Tag dans .htaccess) -->
 <meta name="robots" content="noindex, nofollow" />
 <meta name="theme-color" content={couleur} />
 <meta name="author" content="Ker Wouf" />
@@ -73,8 +74,8 @@ const donnees = {
 <meta property="og:image:alt" content={photos.accroche.alt} />
 <meta name="twitter:card" content="summary_large_image" />
 
-<link rel="icon" href="/favicon/favicon-32.webp" sizes="32x32" type="image/webp" />
-<link rel="icon" href="/favicon/favicon-192.webp" sizes="192x192" type="image/webp" />
-<link rel="apple-touch-icon" href="/favicon/apple-touch-icon-180.webp" />
+<link rel="icon" href={lien('favicon/favicon-32.webp')} sizes="32x32" type="image/webp" />
+<link rel="icon" href={lien('favicon/favicon-192.webp')} sizes="192x192" type="image/webp" />
+<link rel="apple-touch-icon" href={lien('favicon/apple-touch-icon-180.webp')} />
 
 {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(donnees)} />}

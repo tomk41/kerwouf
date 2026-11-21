@@ -1,14 +1,14 @@
 # Ker Wouf : refonte du site (bêta)
 
 Nouveau site de **Ker Wouf**, garde de chiens et pension familiale à Nivillac.
-Cinq propositions de design sont publiées sur **https://beta.kerwouf.fr** pour que Théotine choisisse la sienne.
-Le site actuel, **kerwouf.fr** (WordPress), n'est pas touché tant qu'une version n'a pas été choisie.
+Cinq propositions de design sont publiées sur **https://kerwouf.fr/beta/** pour que Théotine choisisse la sienne.
+La bêta vit dans le dossier `www/beta/` de l'hébergement OVH, à côté du site actuel (WordPress), qui n'est pas touché.
 
 | Adresse | Contenu |
 |---|---|
-| `/` | Page de choix : les 5 versions avec captures d'écran |
-| `/v1/` … `/v5/` | Les 5 versions (avec mentions légales, confidentialité, page « merci ») |
-| `/corrections/` | Relecture des textes : avant / après |
+| `/beta/` | Page de choix : les 5 versions avec captures d'écran |
+| `/beta/v1/` … `/beta/v5/` | Les 5 versions (avec mentions légales, confidentialité, page « merci ») |
+| `/beta/corrections/` | Relecture des textes : avant / après |
 
 ---
 
@@ -40,7 +40,7 @@ src/lib/                 code commun : lecture du texte, catalogue photos, liste
 src/components/          composants communs : en-tête SEO, formulaire, vidéo, navigation…
 src/versions/vN/         design propre à chaque version (Layout, Accueil, styles.css)
 src/pages/               pages du site (une URL = un fichier)
-public/                  fichiers copiés tels quels : .htaccess, contact.php, robots.txt, favicons, captures
+public/                  fichiers copiés tels quels : .htaccess, contact.php, favicons, captures
 scripts/                 outils : captures d'écran, contrôle qualité, Lighthouse, typographie
 .github/workflows/       déploiement automatique sur OVH
 ```
@@ -95,13 +95,13 @@ npm run dev            # site local sur http://localhost:4321 (rechargement auto
 
 | Commande | Rôle |
 |---|---|
-| `npm run dev` | Serveur de développement |
+| `npm run dev` | Serveur de développement (le site est sous http://localhost:4321/beta/) |
 | `npm run build` | Construit le site dans `dist/` (c'est ce qui est envoyé sur OVH) |
 | `npm run preview` | Sert `dist/` en local, pour vérifier le résultat construit |
 | `npm run typo` | Ajoute les espaces insécables dans les fichiers de contenu |
 | `npm run screenshots` | Regénère les captures de la page de choix (`public/captures/`) |
 | `npm run controle` | Contrôle qualité : débordements à 375/768/1440 px, accessibilité (axe, WCAG AA), liens, champs manquants |
-| `npm run lighthouse` | Scores Lighthouse (`-- --desktop`, ou `-- --cpu=2` sur une machine lente) |
+| `npm run lighthouse` | Scores Lighthouse (`-- --desktop`, `-- --essais=3` pour une moyenne, `-- --page=/v4/`, `-- --cpu=2` sur une machine lente) |
 
 Pour `screenshots`, `controle` et `lighthouse`, il faut une fois : `npx playwright install chromium`.
 Le formulaire (`contact.php`) ne fonctionne pas en local : il n'est actif que sur le serveur OVH.
@@ -113,71 +113,85 @@ On ne travaille **jamais directement sur `main`** : tout ce qui arrive sur `main
 1. **Créer une branche** : `git switch -c texte-tarifs` (ou « Create a new branch » sur GitHub).
 2. **Modifier, puis enregistrer** : `git add -A && git commit -m "Tarifs : …"` puis `git push -u origin texte-tarifs`.
 3. **Ouvrir une pull request** vers `main` sur GitHub. L'autre personne relit les changements (onglet « Files changed »).
-4. **Fusionner (merge)** la pull request. Le workflow « Déploiement bêta » démarre tout seul : construction du site, puis envoi en FTPS dans le dossier `beta/` d'OVH. Compter 2 à 3 minutes.
-5. Vérifier sur https://beta.kerwouf.fr. Le suivi est dans l'onglet **Actions** de GitHub (pastille verte = en ligne).
+4. **Fusionner (merge)** la pull request. Le workflow « Déploiement bêta » démarre tout seul : construction du site, puis envoi en FTPS dans le dossier `www/beta/` d'OVH. Compter 2 à 3 minutes.
+5. Vérifier sur https://kerwouf.fr/beta/. Le suivi est dans l'onglet **Actions** de GitHub (pastille verte = en ligne).
 
 On peut aussi relancer un déploiement à la main : **Actions → Déploiement bêta → Run workflow**.
 
 ## 6. Mise en place (à faire une seule fois)
 
-### 6.1 Sous-domaine beta.kerwouf.fr chez OVH
+La bêta est servie dans un **sous-dossier** du site actuel, `https://kerwouf.fr/beta/`, car l'offre d'hébergement OVH ne permet pas de second site. Il n'y a donc ni sous-domaine ni configuration DNS à faire.
 
-Dans l'espace client OVHcloud :
+### 6.1 Utilisateur FTP limité au dossier `www/beta`
 
-1. **Web Cloud → Hébergements → (l'hébergement de kerwouf.fr) → onglet « Multisite » → « Ajouter un domaine ou sous-domaine »**.
-2. Choisir `kerwouf.fr`, saisir le sous-domaine **`beta`**.
-3. **Dossier racine : `beta`** (un nouveau dossier à côté de `www`, surtout **pas** `www`).
-4. Cocher **SSL** (certificat Let's Encrypt gratuit). Laisser le CDN décoché. Valider.
-5. Si le domaine est géré chez OVH, l'entrée DNS est créée automatiquement. Sinon, ajouter un enregistrement DNS pour `beta` pointant vers l'hébergement (même cible que `www`).
-6. Attendre la propagation (quelques minutes à quelques heures). Si le certificat SSL n'apparaît pas, aller dans **Multisite → « … » → Modifier → SSL**, puis **Informations générales → Certificat SSL → Régénérer**.
+Pour que le déploiement automatique ne puisse jamais toucher au WordPress, on crée un utilisateur FTP qui ne voit **que** `www/beta`. Dans l'espace client OVHcloud :
 
-Le formulaire de contact envoie ses messages depuis `no-reply@kerwouf.fr` via la fonction `mail()` d'OVH. Aucun compte e-mail n'est nécessaire, mais il faut vérifier dans **Hébergement → E-mails (onglet « Scripts e-mails »)** que l'envoi est actif. Penser aussi à regarder les spams de kerwouf@gmail.com au premier test.
+1. **Web Cloud → Hébergements → (l'hébergement de kerwouf.fr) → onglet « FTP - SSH »**.
+2. Si le dossier n'existe pas encore, le créer avec le login FTP principal (FileZilla ou l'explorateur FTP d'OVH) : `www/beta/`.
+3. **« Ajouter un utilisateur »** : choisir un identifiant (ex. `kerwouf-beta`), **dossier racine : `www/beta`**, droits **lecture et écriture**, puis définir un mot de passe solide.
+4. Vérifier avec FileZilla (protocole « FTP explicite sur TLS ») : à la connexion, ce nouvel utilisateur doit arriver directement dans le dossier `beta` vide, sans voir `www` ni les fichiers WordPress.
 
-### 6.2 Secrets GitHub (identifiants FTP)
+### 6.2 Envoi d'e-mails par script (formulaire de contact)
+
+Le formulaire envoie ses messages avec la fonction `mail()` de l'hébergement, depuis l'adresse `no-reply@kerwouf.fr` (aucune boîte e-mail à créer).
+
+1. **Hébergement → onglet « Emails »** (« Scripts e-mails »).
+2. Vérifier que l'état de l'envoi est **« Actif »**. S'il est « Désactivé » ou « Bloqué », cliquer sur **« Changer l'état »** pour l'activer.
+3. Au premier test, regarder aussi les spams de kerwouf@gmail.com et marquer le message « non spam ».
+
+### 6.3 Secrets GitHub (identifiants FTP)
 
 Sur GitHub : **Settings → Secrets and variables → Actions → New repository secret**. Créer :
 
 | Secret | Valeur | Où la trouver chez OVH |
 |---|---|---|
 | `FTP_SERVER` | ex. `ftp.cluster0XX.hosting.ovh.net` | Hébergement → Informations générales → « Serveur FTP » |
-| `FTP_USER` | l'identifiant FTP principal | Hébergement → onglet « FTP - SSH » |
-| `FTP_PASSWORD` | son mot de passe | même onglet (« Changer le mot de passe » si besoin) |
+| `FTP_USER` | l'identifiant de l'utilisateur **limité à `www/beta`** (point 6.1) | onglet « FTP - SSH » |
+| `FTP_PASSWORD` | son mot de passe | celui choisi au point 6.1 |
 
-Aucun identifiant n'est écrit dans le code. Le workflow envoie dans `./beta/`, à la racine du FTP, à côté de `./www/` : le site actuel n'est jamais touché.
+Aucun identifiant n'est écrit dans le code. Comme l'utilisateur FTP a `www/beta` pour racine, le workflow envoie dans `./` (`server-dir: ./`). Avec le login FTP principal, il faudrait `./www/beta/`, mais c'est déconseillé : une erreur de chemin pourrait alors toucher le WordPress.
 
-> Le premier déploiement envoie tout le site, puis seuls les fichiers modifiés partent. L'outil garde la liste des fichiers envoyés dans `beta/.ftp-deploy-sync-state.json` : ne pas le supprimer (il est protégé par le `.htaccess`).
+> Le premier déploiement envoie tout le site, puis seuls les fichiers modifiés partent. L'outil garde la liste des fichiers envoyés dans `www/beta/.ftp-deploy-sync-state.json` : ne pas le supprimer (il est protégé par le `.htaccess`).
+
+### 6.4 Ce que fait le `.htaccess` de la bêta
+
+`public/.htaccess` devient `www/beta/.htaccess`. Il coupe la réécriture d'URL (`RewriteEngine Off`), sinon le WordPress du dossier parent intercepterait les adresses `/beta/…`. Il ajoute l'en-tête `X-Robots-Tag: noindex`, le cache des fichiers et la compression, et sert la page 404 de la bêta. Le HTTPS et le www restent gérés par le WordPress (dossier `www/`).
 
 ## 7. Une fois la version choisie : passage en production
 
-Exemple avec la version 3 choisie. À faire sur une branche, puis en pull request.
+Exemple avec la version 3 choisie. Le nouveau site remplacera le WordPress à la racine de `www/`. À faire sur une branche, puis en pull request.
 
 1. **Sauvegarder le WordPress actuel** avant toute chose :
-   - fichiers : télécharger tout le dossier `www/` par FTP ;
+   - fichiers : télécharger tout le dossier `www/` par FTP (login principal) ;
    - base de données : Hébergement → Bases de données → « … » → Créer une sauvegarde, puis la télécharger ;
-   - garder cette archive (le site actuel pourra être restauré si besoin).
-2. **Ne garder que la version choisie, à la racine** :
+   - garder cette archive : le site actuel pourra être restauré si besoin.
+2. **Ne garder que la version choisie** :
    - déplacer le contenu de `src/pages/v3/` dans `src/pages/` (`index.astro`, `mentions-legales.astro`, `confidentialite.astro`, `merci.astro`) ;
    - supprimer `src/pages/v1…v5/`, `src/pages/corrections.astro`, les autres `src/versions/vN/`, `public/captures/` et `src/components/BandeauVersion.astro` (et son appel dans `Squelette.astro`) ;
-   - remplacer les liens `/v3/` par `/` (dans `src/versions/v3/`, `Formulaire.astro` et `content/mentions-legales.md`) ;
-   - dans `public/contact.php` : supprimer le préfixe `[BETA …]` de l'objet et rediriger vers `/merci/`.
-3. **Retirer le noindex** :
-   - `src/components/Tete.astro` : supprimer `<meta name="robots" content="noindex, nofollow">` ;
-   - `public/robots.txt` : remplacer par `User-agent: *` / `Allow: /` / `Sitemap: https://www.kerwouf.fr/sitemap-index.xml` ;
-   - `public/.htaccess` : supprimer la ligne `X-Robots-Tag`.
-4. **Sitemap** : `npx astro add sitemap`, puis dans `astro.config.mjs`, `site: 'https://www.kerwouf.fr'`.
-5. **Redirection www** dans `public/.htaccess` (choisir une forme, par exemple avec www) :
+   - remplacer les liens `lien('v3/…')` par `lien('…')` (dans `src/versions/v3/`, `Formulaire.astro` et `content/mentions-legales.md`).
+3. **Passer à la racine du domaine** :
+   - `astro.config.mjs` : supprimer `base: '/beta'` et mettre `site: 'https://www.kerwouf.fr'`. Tous les liens passent par `lien()`, ils suivent automatiquement ;
+   - `public/contact.php` : `const BASE = '';`, retirer le préfixe `[BETA …]` de l'objet, et rediriger vers `/merci/` (plus de version dans l'adresse) ;
+   - `public/.htaccess` : `ErrorDocument 404 /404.html`, chemin du cache `^/_astro/`, et remplacer `RewriteEngine Off` par la redirection HTTPS + www (le WordPress ne sera plus là pour la faire) :
 
-   ```apache
-   RewriteCond %{HTTP_HOST} ^kerwouf\.fr$ [NC]
-   RewriteRule ^(.*)$ https://www.kerwouf.fr/$1 [R=301,L]
-   ```
-   Ajouter aussi des redirections 301 depuis les anciennes adresses WordPress utiles (ex. `/blog/…` vers `/`).
-6. **Déployer vers `./www/`** : dans `.github/workflows/deploy.yml`, remplacer `server-dir: ./beta/` par `server-dir: ./www/`. Au premier envoi, l'outil ajoute ses fichiers sans effacer ceux de WordPress. Une fois le nouveau site vérifié, supprimer par FTP les fichiers WordPress restants (`wp-*`, `index.php`, etc.). La sauvegarde de l'étape 1 est là en cas de problème.
-7. Vérifier le formulaire, le certificat SSL de `www.kerwouf.fr`, puis déclarer le sitemap dans Google Search Console. Supprimer ensuite le multisite `beta` chez OVH.
+     ```apache
+     RewriteEngine On
+     RewriteCond %{SERVER_PORT} 80 [OR]
+     RewriteCond %{HTTP_HOST} ^kerwouf\.fr$ [NC]
+     RewriteRule ^(.*)$ https://www.kerwouf.fr/$1 [R=301,L]
+     ```
+     Ajouter aussi des redirections 301 depuis les anciennes adresses WordPress utiles (ex. `/blog/…` vers `/`).
+4. **Retirer le noindex** :
+   - `src/components/Tete.astro` : supprimer `<meta name="robots" content="noindex, nofollow">` ;
+   - `public/.htaccess` : supprimer la ligne `X-Robots-Tag` ;
+   - créer `public/robots.txt` : `User-agent: *` / `Allow: /` / `Sitemap: https://www.kerwouf.fr/sitemap-index.xml`.
+5. **Sitemap** : `npx astro add sitemap` (il utilise la valeur `site` de `astro.config.mjs`).
+6. **Déployer vers `www/`** : il faut un accès FTP dont la racine couvre `www` (le login principal avec `server-dir: ./www/`, ou un utilisateur dédié dont la racine est `www`, avec `server-dir: ./`). Mettre à jour `FTP_USER`, `FTP_PASSWORD` et `server-dir` dans `.github/workflows/deploy.yml`. Au premier envoi, l'outil ajoute ses fichiers sans effacer ceux de WordPress. Une fois le nouveau site vérifié, supprimer par FTP les fichiers WordPress restants (`wp-*`, `index.php`, l'ancien `.htaccess` WordPress, etc.) et le dossier `www/beta/`. La sauvegarde de l'étape 1 est là en cas de problème.
+7. Vérifier le formulaire, le HTTPS de `www.kerwouf.fr` et la redirection depuis `kerwouf.fr`, puis déclarer le sitemap dans Google Search Console. Supprimer enfin l'utilisateur FTP limité à `www/beta`.
 
 ## 8. Pour les développeurs
 
-- **Astro 7** (site statique, sans framework UI), **Node 22.23+**. Le cahier des charges prévoyait Node 20, mais Node 20 est en fin de vie (avril 2026) et les versions d'Astro qui le supportent encore présentent des failles de sécurité connues.
+- **Astro 7** (site statique, sans framework UI), **Node 22.23+**. Le site est construit avec `base: '/beta'` : tout lien interne doit passer par `lien()` (`src/lib/chemins.ts`), jamais par une adresse écrite en dur commençant par `/`. `npm run controle` signale toute ressource en 404. Le cahier des charges prévoyait Node 20, mais Node 20 est en fin de vie (avril 2026) et les versions d'Astro qui le supportent encore présentent des failles de sécurité connues.
 - Le contenu est du YAML (frontmatter de `content/kerwouf-refonte.md`) lu par `src/lib/contenu.ts`, typé par l'interface `Contenu`. Un nouveau champ se déclare à la fois dans l'interface et dans le fichier.
 - Typographie française : `src/lib/typographie.mjs`, appliquée au chargement et par `npm run typo`.
 - Chaque version importe ses propres polices (`@fontsource-variable/*`, auto-hébergées) et sa feuille `styles.css`. Seuls les composants de `src/components/` sont partagés. Classes communes à styler dans chaque version : `kw-nav*`, `kw-menu*`, `kw-form`, `kw-input`, `kw-video*`, `page-texte`, `bouton`.

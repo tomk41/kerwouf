@@ -1,6 +1,6 @@
-# Déploiement de la bêta sur beta.kerwouf.fr (hébergement mutualisé OVH, FTPS)
+# Déploiement de la bêta sur https://kerwouf.fr/beta/ (hébergement mutualisé OVH, FTPS)
 # Déclenché à chaque push sur main, ou à la main depuis l'onglet Actions.
-# Ne touche QUE le dossier ./beta/ du FTP. Le site actuel (./www/) n'est jamais modifié.
+# Ne touche QUE le dossier www/beta/. Le WordPress actuel (reste de www/) n'est jamais modifié.
 
 name: Déploiement bêta
 
@@ -40,12 +40,12 @@ jobs:
 
       - name: Vérifier les fichiers serveur
         run: |
-          for f in .htaccess robots.txt contact.php 404.html index.html; do
+          for f in .htaccess contact.php 404.html index.html; do
             test -f "dist/$f" || { echo "::error::dist/$f manquant"; exit 1; }
           done
           grep -q 'noindex' dist/index.html || { echo "::error::meta noindex absente"; exit 1; }
 
-      - name: Envoyer dist/ vers ./beta/ (FTPS)
+      - name: Envoyer dist/ vers www/beta/ (FTPS)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -54,6 +54,7 @@ jobs:
           protocol: ftps
           port: 21
           local-dir: ./dist/
-          # Chemin relatif à la racine FTP OVH : ./beta/ est à côté de ./www/, jamais dedans.
-          server-dir: ./beta/
+          # L'utilisateur FTP des secrets est limité à www/beta : c'est sa racine, d'où ./
+          # Avec le login FTP principal de l'hébergement, ce serait ./www/beta/
+          server-dir: ./
           dangerous-clean-slate: false

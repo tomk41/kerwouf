@@ -21,7 +21,6 @@ Les cinq maquettes utilisent exactement ces mêmes textes : seul le design chan
 | 7 | Atouts en haut de page (8 chiens, 1 000 m², diplôme, 7 j/7) | Tout est repris de ton site. Tu valides cette mise en avant ? |
 | 8 | Nouvelle section « Une journée type à la pension » | Elle n’assemble que des informations déjà présentes sur ton site (box, 8 h – 18 h dehors, verger, Vilaine, groupes par affinités). Elle décrit bien une vraie journée ? |
 | 9 | Formulaire de contact (nouveau) | Les messages arriveront sur kerwouf@gmail.com. |
-| 10 | Mentions légales | Le nom de famille n’apparaît pas. La loi demande en principe le nom complet de l’entrepreneure individuelle : veux-tu l’ajouter ? |
 
 ## Accroche
 

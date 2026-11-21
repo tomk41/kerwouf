@@ -1,4 +1,5 @@
 ---
+import { lien } from '../../lib/chemins';
 import Layout from '../../versions/v1/Layout.astro';
 import { c, lienTel, telAffiche } from '../../lib/contenu';
 ---
@@ -9,7 +10,7 @@ import { c, lienTel, telAffiche } from '../../lib/contenu';
       <h1>{c.merci.titre}</h1>
       <p>{c.merci.texte}</p>
       <p><a href={lienTel}>{telAffiche}</a></p>
-      <p><a class="bouton" href="/v1/">{c.merci.bouton}</a></p>
+      <p><a class="bouton" href={lien('v1/')}>{c.merci.bouton}</a></p>
     </article>
   </div>
 </Layout>

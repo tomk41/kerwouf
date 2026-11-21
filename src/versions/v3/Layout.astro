@@ -1,4 +1,5 @@
 ---
+import { lien } from '../../lib/chemins';
 import Squelette from '../../components/Squelette.astro';
 import Navigation from '../../components/Navigation.astro';
 import Photo from '../../components/Photo.astro';
@@ -10,13 +11,13 @@ import './styles.css';
 
 interface Props { titre?: string; description?: string; accueil?: boolean }
 const { titre, description, accueil = false } = Astro.props;
-const prefixe = accueil ? '' : '/v3/';
+const prefixe = accueil ? '' : lien('v3/');
 ---
 
 <Squelette n={3} titre={titre ? `${titre} – Ker Wouf` : undefined} description={description} jsonLd={accueil}>
   <header slot="entete" class="entete">
     <div class="boite entete__in">
-      <a class="marque" href="/v3/">
+      <a class="marque" href={lien('v3/')}>
         <Photo nom="logo" max={200} sizes="52px" class="marque__logo" alt="" prioritaire />
         <span>Ker <em>Wouf</em></span>
       </a>
@@ -42,8 +43,8 @@ const prefixe = accueil ? '' : '/v3/';
         <p><a href={lienMail}>{c.site.email}</a></p>
       </address>
       <ul>
-        <li><a href="/v3/mentions-legales/">{c.pied_de_page.mentions}</a></li>
-        <li><a href="/v3/confidentialite/">{c.pied_de_page.confidentialite}</a></li>
+        <li><a href={lien('v3/mentions-legales/')}>{c.pied_de_page.mentions}</a></li>
+        <li><a href={lien('v3/confidentialite/')}>{c.pied_de_page.confidentialite}</a></li>
       </ul>
     </div>
     <p class="pied__copy">© 2026 {c.site.nom}</p>

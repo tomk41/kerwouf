@@ -1,4 +1,5 @@
 ---
+import { lien } from '../lib/chemins';
 // Formulaire de contact commun, envoyé à /contact.php (voir public/contact.php).
 // Le style vient de chaque version : classes kw-form, kw-champ, kw-label, kw-input,
 // kw-aide, kw-case, kw-alerte. Le bouton reçoit la classe passée en `bouton`.
@@ -14,7 +15,7 @@ const f = c.contact.formulaire;
 const id = (nom: string) => `${version}-${nom}`;
 ---
 
-<form class:list={['kw-form', classe]} action="/contact.php" method="post" accept-charset="UTF-8">
+<form class:list={['kw-form', classe]} action={lien('contact.php')} method="post" accept-charset="UTF-8">
   <div class="kw-alerte" role="alert" hidden data-erreur-champs={f.erreur_champs} data-erreur-envoi={f.erreur_envoi}></div>
 
   <input type="hidden" name="version" value={version} />
@@ -50,7 +51,7 @@ const id = (nom: string) => `${version}-${nom}`;
     <input type="checkbox" id={id('rgpd')} name="consentement" value="oui" required />
     <label for={id('rgpd')}>
       {f.consentement}
-      <a href={`/${version}/confidentialite/`}>{f.lien_confidentialite}</a>
+      <a href={lien(`${version}/confidentialite/`)}>{f.lien_confidentialite}</a>
     </label>
   </div>
 

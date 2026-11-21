@@ -1,5 +1,6 @@
 ---
-// Page de choix (racine de beta.kerwouf.fr)
+import { lien } from '../lib/chemins';
+// Page de choix (https://kerwouf.fr/beta/)
 import Neutre from '../layouts/Neutre.astro';
 import { versions } from '../lib/versions';
 ---
@@ -21,15 +22,15 @@ import { versions } from '../lib/versions';
   <ul class="choix">
     {versions.map((v) => (
       <li class="carte-choix">
-        <a class="carte-choix__visuels" href={`/${v.slug}/`} tabindex="-1" aria-hidden="true">
-          <img class="carte-choix__desktop" src={`/captures/${v.slug}-desktop.jpg`} alt="" width="864" height="540" loading="lazy" decoding="async" />
-          <img class="carte-choix__mobile" src={`/captures/${v.slug}-mobile.jpg`} alt="" width="390" height="844" loading="lazy" decoding="async" />
+        <a class="carte-choix__visuels" href={lien(`${v.slug}/`)} tabindex="-1" aria-hidden="true">
+          <img class="carte-choix__desktop" src={lien(`captures/${v.slug}-desktop.jpg`)} alt="" width="864" height="540" loading="lazy" decoding="async" />
+          <img class="carte-choix__mobile" src={lien(`captures/${v.slug}-mobile.jpg`)} alt="" width="390" height="844" loading="lazy" decoding="async" />
         </a>
         <div class="carte-choix__texte">
           <p class="carte-choix__num">Version {v.n}</p>
           <h2>{v.nom}</h2>
           <p>{v.description}</p>
-          <a class="carte-choix__bouton" href={`/${v.slug}/`}>Voir la version<span class="kw-sr"> {v.n} : {v.nom}</span></a>
+          <a class="carte-choix__bouton" href={lien(`${v.slug}/`)}>Voir la version<span class="kw-sr"> {v.n} : {v.nom}</span></a>
         </div>
       </li>
     ))}
@@ -42,7 +43,7 @@ import { versions } from '../lib/versions';
       horaires, capacité, diplôme, avis). La page de relecture montre l’ancien et le nouveau texte côte à côte,
       avec quelques questions à vérifier en priorité.
     </p>
-    <p><a class="carte-choix__bouton carte-choix__bouton--clair" href="/corrections/">Relire les textes (avant / après)</a></p>
+    <p><a class="carte-choix__bouton carte-choix__bouton--clair" href={lien('corrections/')}>Relire les textes (avant / après)</a></p>
   </section>
 </Neutre>
 

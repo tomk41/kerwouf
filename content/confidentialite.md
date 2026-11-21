@@ -4,7 +4,7 @@ titre: "Politique de confidentialité"
 
 ## Responsable du traitement
 
-Théotine, entrepreneure individuelle, enseigne Ker Wouf, 19 Le Couédelo, 56130 Nivillac. Contact : [kerwouf@gmail.com](mailto:kerwouf@gmail.com).
+Théotine Henique, entrepreneure individuelle, enseigne Ker Wouf, 19 Le Couédelo, 56130 Nivillac. Contact : [kerwouf@gmail.com](mailto:kerwouf@gmail.com).
 
 ## Données collectées
 

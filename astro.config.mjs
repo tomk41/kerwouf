@@ -1,9 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-// Site statique : `npm run build` produit ./dist/, déployé tel quel dans ./beta/ chez OVH.
+// Site statique : `npm run build` produit ./dist/, déployé tel quel dans www/beta/ chez OVH.
+// La bêta est servie sous https://kerwouf.fr/beta/ : tous les liens internes passent par
+// `lien()` (src/lib/chemins.ts), qui ajoute ce préfixe.
 export default defineConfig({
-  site: 'https://beta.kerwouf.fr',
+  site: 'https://kerwouf.fr',
+  base: '/beta',
   output: 'static',
   trailingSlash: 'ignore',
   build: {

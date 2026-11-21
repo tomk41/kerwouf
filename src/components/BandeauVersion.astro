@@ -1,4 +1,5 @@
 ---
+import { lien } from '../lib/chemins';
 // Bandeau fin en haut de chaque version : « Version N/5 – nom · ← précédente · suivante → · Retour au choix »
 import { versionParNumero, precedente, suivante } from '../lib/versions';
 
@@ -13,11 +14,11 @@ const suiv = suivante(n);
   <p>
     <strong>Version {n}/5 – {v.nom}</strong>
     <span class="sep" aria-hidden="true">·</span>
-    <a href={`/${prec.slug}/`} title={prec.nom}>← précédente</a>
+    <a href={lien(`${prec.slug}/`)} title={prec.nom}>← précédente</a>
     <span class="sep" aria-hidden="true">·</span>
-    <a href={`/${suiv.slug}/`} title={suiv.nom}>suivante →</a>
+    <a href={lien(`${suiv.slug}/`)} title={suiv.nom}>suivante →</a>
     <span class="sep" aria-hidden="true">·</span>
-    <a href="/">Retour au choix</a>
+    <a href={lien('')}>Retour au choix</a>
   </p>
 </nav>
 

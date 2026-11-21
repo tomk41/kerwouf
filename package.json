@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "Refonte du site Ker Wouf : 5 propositions de design publiées sur beta.kerwouf.fr",
+  "description": "Refonte du site Ker Wouf : 5 propositions de design publiées sur kerwouf.fr/beta/",
   "engines": {
     "node": ">=22.23.4"
   },

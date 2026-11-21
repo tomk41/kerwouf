@@ -2,7 +2,7 @@
 //  - captures pleine page à 375, 768 et 1440 px (dossier controle/, non versionné)
 //  - détection du défilement horizontal
 //  - audit d'accessibilité axe-core (WCAG 2 A/AA)
-//  - liens internes cassés
+//  - liens internes cassés et ressources en erreur (images, polices, CSS, JS…)
 // Usage : npm run build && npm run controle [-- v1 v3]   (sans argument : tout le site)
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
@@ -19,7 +19,7 @@ const largeurs = [375, 768, 1440];
 const dossier = 'controle';
 mkdirSync(dossier, { recursive: true });
 
-const { url, arreter } = await demarrerPreview();
+const { url, origine, arreter } = await demarrerPreview();
 const navigateur = await chromium.launch();
 let problemes = 0;
 const vus = new Set();
@@ -29,6 +29,12 @@ for (const chemin of pages) {
   for (const largeur of largeurs) {
     const contexte = await navigateur.newContext({ viewport: { width: largeur, height: 900 }, reducedMotion: 'reduce' });
     const page = await contexte.newPage();
+    const enErreur = [];
+    page.on('response', (r) => {
+      const estPage = r.request().resourceType() === 'document' && chemin === '/page-inexistante/';
+      if (r.status() >= 400 && !estPage) enErreur.push(`${r.status()} ${r.url()}`);
+    });
+    page.on('requestfailed', (r) => enErreur.push(`échec ${r.url()}`));
     const rep = await page.goto(url + chemin, { waitUntil: 'networkidle' });
     const statut = rep?.status();
     // Force le chargement des images paresseuses avant la capture
@@ -42,6 +48,11 @@ for (const chemin of pages) {
       await page.screenshot({ path: `${dossier}/${nom}.jpg`, fullPage: true, type: 'jpeg', quality: 60 });
     }
     if (largeur === 1440 && /undefined|\[object Object\]/.test(await page.innerText('body'))) { problemes++; console.log(`✗ ${chemin} : texte « undefined » (champ de contenu manquant)`); }
+    if (largeur === 1440) {
+      const texte = await page.innerText('body');
+      if (chemin.endsWith('mentions-legales/') && !texte.includes('Théotine Henique')) { problemes++; console.log(`✗ ${chemin} : nom complet de l'éditrice absent`); }
+      if (chemin === '/page-inexistante/' && !texte.includes('cette page n’existe pas')) { problemes++; console.log(`✗ ${chemin} : page 404 personnalisée non servie`); }
+    }
     if (debord > 0) { problemes++; console.log(`✗ ${chemin} @${largeur}px : défilement horizontal de ${debord}px`); }
     if (statut !== 200 && chemin !== '/page-inexistante/') { problemes++; console.log(`✗ ${chemin} : HTTP ${statut}`); }
 
@@ -59,6 +70,7 @@ for (const chemin of pages) {
     if (largeur === 1440) {
       for (const href of await page.$$eval('a[href^="/"]', (as) => as.map((a) => a.getAttribute('href')))) liens.add(href.split('#')[0]);
     }
+    for (const e of new Set(enErreur)) { problemes++; console.log(`✗ ${chemin} @${largeur}px : ressource en erreur ${e}`); }
     await contexte.close();
   }
   console.log(`· ${chemin} contrôlée`);
@@ -67,7 +79,7 @@ for (const chemin of pages) {
 // Liens internes
 for (const href of liens) {
   if (!href || href.endsWith('.php')) continue;
-  const r = await fetch(url + href);
+  const r = await fetch(origine + href);
   if (r.status !== 200) { problemes++; console.log(`✗ lien cassé : ${href} (HTTP ${r.status})`); }
 }
 
