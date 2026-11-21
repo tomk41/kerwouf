@@ -1,9 +1,105 @@
 ---
-// Page provisoire : remplacée par la page de choix (partie 4).
-import Tete from '../components/Tete.astro';
+// Page de choix (racine de beta.kerwouf.fr)
+import Neutre from '../layouts/Neutre.astro';
+import { versions } from '../lib/versions';
 ---
-<!doctype html>
-<html lang="fr">
-  <head><Tete titre="Ker Wouf – bêta" /></head>
-  <body><main><h1>Ker Wouf – bêta en préparation</h1></main></body>
-</html>
+
+<Neutre titre="Kerwouf – choisis ton futur site" description="Cinq propositions de design pour le nouveau site Ker Wouf, à comparer avant de choisir." large>
+  <header class="choix__tete">
+    <h1>Kerwouf – choisis ton futur site</h1>
+    <p>
+      Coucou Théotine ! Voici cinq propositions pour le nouveau site de Ker Wouf. Les cinq ont exactement
+      les mêmes textes, les mêmes photos et les mêmes informations : seule l’allure change.
+    </p>
+    <p>
+      Prends le temps de les parcourir sur ton téléphone et sur un ordinateur. Un bandeau en haut de chaque
+      version permet de passer à la suivante. Note celle que tu préfères, ou ce que tu aimes dans chacune :
+      on peut aussi mélanger.
+    </p>
+  </header>
+
+  <ul class="choix">
+    {versions.map((v) => (
+      <li class="carte-choix">
+        <a class="carte-choix__visuels" href={`/${v.slug}/`} tabindex="-1" aria-hidden="true">
+          <img class="carte-choix__desktop" src={`/captures/${v.slug}-desktop.jpg`} alt="" width="864" height="540" loading="lazy" decoding="async" />
+          <img class="carte-choix__mobile" src={`/captures/${v.slug}-mobile.jpg`} alt="" width="390" height="844" loading="lazy" decoding="async" />
+        </a>
+        <div class="carte-choix__texte">
+          <p class="carte-choix__num">Version {v.n}</p>
+          <h2>{v.nom}</h2>
+          <p>{v.description}</p>
+          <a class="carte-choix__bouton" href={`/${v.slug}/`}>Voir la version<span class="kw-sr"> {v.n} : {v.nom}</span></a>
+        </div>
+      </li>
+    ))}
+  </ul>
+
+  <section class="relecture" aria-labelledby="titre-relecture">
+    <h2 id="titre-relecture">Relire les textes</h2>
+    <p>
+      Les textes ont été réécrits pour être plus clairs et plus chaleureux, sans changer aucun fait (tarifs,
+      horaires, capacité, diplôme, avis). La page de relecture montre l’ancien et le nouveau texte côte à côte,
+      avec quelques questions à vérifier en priorité.
+    </p>
+    <p><a class="carte-choix__bouton carte-choix__bouton--clair" href="/corrections/">Relire les textes (avant / après)</a></p>
+  </section>
+</Neutre>
+
+<style>
+  .choix__tete { max-width: 46rem; margin-bottom: 2.5rem; }
+  .choix { display: grid; gap: 1.5rem; }
+  @media (min-width: 52rem) { .choix { grid-template-columns: 1fr 1fr; } }
+  .carte-choix {
+    background: #fff;
+    border: 1px solid #e2e2de;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .carte-choix__visuels {
+    position: relative;
+    display: block;
+    background: #eceae5;
+    padding: 1rem 4.5rem 1rem 1rem;
+  }
+  .carte-choix__desktop {
+    width: 100%;
+    height: auto;
+    border-radius: 0.375rem;
+    box-shadow: 0 6px 20px -8px rgb(0 0 0 / 0.35);
+  }
+  .carte-choix__mobile {
+    position: absolute;
+    right: 1rem;
+    bottom: 0.75rem;
+    width: 22%;
+    max-width: 7.5rem;
+    height: auto;
+    border-radius: 0.75rem;
+    border: 4px solid #1d1f21;
+    box-shadow: 0 6px 20px -8px rgb(0 0 0 / 0.45);
+  }
+  .carte-choix__texte { padding: 1.25rem 1.5rem 1.5rem; display: grid; gap: 0.5rem; justify-items: start; flex: 1; align-content: start; }
+  .carte-choix__texte h2 { margin: 0; font-size: 1.45rem; }
+  .carte-choix__texte p + p { margin-top: 0; }
+  .carte-choix__num { font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5a5f66; }
+  .carte-choix__bouton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    background: #1d1f21;
+    color: #fff !important;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .carte-choix__bouton:hover { background: #3a3d41; }
+  .carte-choix__bouton--clair { background: #fff; color: #1d1f21 !important; border: 2px solid #1d1f21; }
+  .carte-choix__bouton--clair:hover { background: #ecebe7; }
+  .relecture { margin-top: 3rem; padding: 1.75rem; background: #fff; border: 1px solid #e2e2de; border-radius: 0.75rem; }
+  .relecture h2 { margin-top: 0; }
+</style>

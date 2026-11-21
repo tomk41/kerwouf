@@ -1,0 +1,44 @@
+---
+// CORRECTIONS.md rendu en page HTML pour la relecture de Théotine.
+import Neutre from '../layouts/Neutre.astro';
+import { Content } from '../../CORRECTIONS.md';
+---
+
+<Neutre titre="Relecture des textes – Ker Wouf" description="Les textes du site Ker Wouf, avant et après réécriture, pour relecture." large>
+  <p><a href="/">← Retour au choix des versions</a></p>
+  <article class="corrections">
+    <Content />
+  </article>
+</Neutre>
+
+<style is:global>
+  .corrections h1 { margin-top: 1rem; }
+  .corrections table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.975rem;
+  }
+  .corrections th, .corrections td { border: 1px solid #dcdcd6; padding: 0.6rem 0.75rem; text-align: left; vertical-align: top; }
+  .corrections thead th { background: #ecebe7; }
+  .corrections td:first-child { color: #4d5257; width: 45%; }
+  .corrections ul { padding-left: 1.25rem; }
+  @media (max-width: 40rem) {
+    .corrections table, .corrections tbody, .corrections tr, .corrections td, .corrections th { display: block; width: auto !important; }
+    .corrections thead { display: none; }
+    .corrections tr { border: 1px solid #dcdcd6; margin-bottom: 0.75rem; background: #fff; }
+    .corrections td { border: 0; border-bottom: 1px dashed #e2e2de; }
+    .corrections td[data-label]::before { content: attr(data-label); display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #5a5f66; }
+  }
+</style>
+
+<script>
+  // Sur mobile, chaque cellule affiche l'en-tête de sa colonne (Avant, Après, Question…)
+  document.querySelectorAll('.corrections table').forEach((table) => {
+    const entetes = [...table.querySelectorAll('thead th')].map((th) => th.textContent?.trim() ?? '');
+    table.querySelectorAll('tbody tr').forEach((tr) => {
+      [...tr.children].forEach((td, i) => { if (entetes[i]) td.setAttribute('data-label', entetes[i]); });
+    });
+  });
+</script>

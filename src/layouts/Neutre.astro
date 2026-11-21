@@ -1,0 +1,42 @@
+---
+// Mise en page sobre et neutre : page de choix, relecture des textes, 404.
+import Tete from '../components/Tete.astro';
+import '../styles/base.css';
+
+interface Props { titre: string; description?: string; large?: boolean }
+const { titre, description, large = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <Tete titre={titre} description={description} couleur="#f6f6f4" />
+  </head>
+  <body class="neutre">
+    <a class="kw-evitement" href="#contenu">Aller au contenu</a>
+    <main id="contenu" tabindex="-1" class:list={['neutre__main', { 'neutre__main--large': large }]}>
+      <slot />
+    </main>
+    <footer class="neutre__pied">
+      <p>Ker Wouf · version bêta non publique · <a href="/">Page de choix</a> · <a href="/corrections/">Relire les textes</a></p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  .neutre {
+    --kw-focus: #1f5fbf;
+    background: #f6f6f4;
+    color: #1d1f21;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .neutre a { color: #1f5fbf; }
+  .neutre__main { width: min(62rem, 100% - 2.5rem); margin-inline: auto; padding-block: 3rem 4rem; }
+  .neutre__main--large { width: min(76rem, 100% - 2.5rem); }
+  .neutre h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1rem; }
+  .neutre h2 { font-size: 1.5rem; line-height: 1.2; margin: 2.5rem 0 1rem; }
+  .neutre p + p { margin-top: 0.75rem; }
+  .neutre__pied { border-top: 1px solid #ddd; padding: 1.5rem 1.25rem 2rem; text-align: center; color: #555; font-size: 0.9375rem; }
+</style>
