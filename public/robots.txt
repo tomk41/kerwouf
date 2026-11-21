@@ -1,0 +1,3 @@
+# Bêta Ker Wouf : ne pas indexer
+User-agent: *
+Disallow: /

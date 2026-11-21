@@ -1,0 +1,63 @@
+# ==========================================================================
+#  beta.kerwouf.fr : configuration Apache (hébergement mutualisé OVH)
+# ==========================================================================
+
+Options -Indexes
+DirectoryIndex index.html index.php
+ErrorDocument 404 /404.html
+AddDefaultCharset UTF-8
+
+# --- HTTPS forcé (pas de redirection www : on est sur un sous-domaine) ------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Méthode recommandée par OVH : le trafic non chiffré arrive sur le port 80
+  RewriteCond %{SERVER_PORT} 80
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+</IfModule>
+
+# --- Fichiers à ne jamais servir --------------------------------------------
+# Fichier d'état de FTP-Deploy-Action (liste des fichiers déployés)
+<Files ".ftp-deploy-sync-state.json">
+  Require all denied
+</Files>
+<FilesMatch "^\.(?!well-known)">
+  Require all denied
+</FilesMatch>
+
+# --- En-têtes ----------------------------------------------------------------
+<IfModule mod_headers.c>
+  # Bêta : aucune indexation par les moteurs de recherche
+  Header always set X-Robots-Tag "noindex, nofollow"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Fichiers générés par Astro (nom contenant une empreinte) : cache d'un an
+  <If "%{REQUEST_URI} =~ m#^/_astro/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  # Pages HTML : toujours revalidées, pour voir les mises à jour tout de suite
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+# --- Cache navigateur ----------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 hour"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
+
+# --- Compression ---------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json image/svg+xml application/xml
+</IfModule>

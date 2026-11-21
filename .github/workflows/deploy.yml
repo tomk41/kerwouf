@@ -1,0 +1,59 @@
+# Déploiement de la bêta sur beta.kerwouf.fr (hébergement mutualisé OVH, FTPS)
+# Déclenché à chaque push sur main, ou à la main depuis l'onglet Actions.
+# Ne touche QUE le dossier ./beta/ du FTP. Le site actuel (./www/) n'est jamais modifié.
+
+name: Déploiement bêta
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Un seul déploiement à la fois ; un nouveau push attend la fin du précédent.
+concurrency:
+  group: deploiement-beta
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploiement:
+    name: Construire et envoyer sur OVH
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      # Node 22 : Astro 7 ne fonctionne plus sous Node 20 (fin de vie en avril 2026).
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Construire le site
+        run: npm run build
+
+      - name: Vérifier les fichiers serveur
+        run: |
+          for f in .htaccess robots.txt contact.php 404.html index.html; do
+            test -f "dist/$f" || { echo "::error::dist/$f manquant"; exit 1; }
+          done
+          grep -q 'noindex' dist/index.html || { echo "::error::meta noindex absente"; exit 1; }
+
+      - name: Envoyer dist/ vers ./beta/ (FTPS)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./dist/
+          # Chemin relatif à la racine FTP OVH : ./beta/ est à côté de ./www/, jamais dedans.
+          server-dir: ./beta/
+          dangerous-clean-slate: false
