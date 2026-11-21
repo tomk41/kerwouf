@@ -1,0 +1,80 @@
+---
+// <head> commun : SEO, Open Graph, favicon, JSON-LD LocalBusiness, noindex (bêta).
+import { getImage } from 'astro:assets';
+import { c } from '../lib/contenu';
+import { photos } from '../lib/images';
+
+interface Props {
+  titre?: string;
+  description?: string;
+  couleur?: string;
+  /** Ajoute les données structurées LocalBusiness (pages d'accueil des versions). */
+  jsonLd?: boolean;
+}
+
+const { titre = c.site.titre_seo, description = c.site.description_seo, couleur = '#ffffff', jsonLd = false } = Astro.props;
+
+if (description.length >= 160) {
+  throw new Error(`Meta description trop longue (${description.length} caractères) : ${description}`);
+}
+
+const site = Astro.site ?? new URL('https://beta.kerwouf.fr');
+const url = new URL(Astro.url.pathname, site).href;
+const og = await getImage({ src: photos.accroche.src, width: 1200, height: 630, fit: 'cover', format: 'jpeg', quality: 80 });
+const ogUrl = new URL(og.src, site).href;
+
+const donnees = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: c.site.nom,
+  description: c.site.description_seo,
+  url: site.href,
+  image: ogUrl,
+  telephone: c.site.telephone_lien,
+  email: c.site.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: c.site.adresse.rue,
+    postalCode: c.site.adresse.code_postal,
+    addressLocality: c.site.adresse.ville,
+    addressRegion: 'Bretagne',
+    addressCountry: 'FR',
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: '07:00',
+      closes: '20:00',
+    },
+  ],
+  priceRange: '12 € – 30 €',
+};
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{titre}</title>
+<meta name="description" content={description} />
+<!-- Bêta : ne pas indexer (voir aussi robots.txt et .htaccess) -->
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content={couleur} />
+<meta name="author" content="Ker Wouf" />
+
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="fr_FR" />
+<meta property="og:site_name" content={c.site.nom} />
+<meta property="og:title" content={titre} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={url} />
+<meta property="og:image" content={ogUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={photos.accroche.alt} />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="icon" href="/favicon/favicon-32.webp" sizes="32x32" type="image/webp" />
+<link rel="icon" href="/favicon/favicon-192.webp" sizes="192x192" type="image/webp" />
+<link rel="apple-touch-icon" href="/favicon/apple-touch-icon-180.webp" />
+
+{jsonLd && <script type="application/ld+json" set:html={JSON.stringify(donnees)} />}

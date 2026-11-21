@@ -1,0 +1,58 @@
+---
+// Bandeau fin en haut de chaque version : « Version N/5 – nom · ← précédente · suivante → · Retour au choix »
+import { versionParNumero, precedente, suivante } from '../lib/versions';
+
+interface Props { n: number }
+const { n } = Astro.props;
+const v = versionParNumero(n);
+const prec = precedente(n);
+const suiv = suivante(n);
+---
+
+<nav class="bandeau-version" aria-label="Choix de la version du site">
+  <p>
+    <strong>Version {n}/5 – {v.nom}</strong>
+    <span class="sep" aria-hidden="true">·</span>
+    <a href={`/${prec.slug}/`} title={prec.nom}>← précédente</a>
+    <span class="sep" aria-hidden="true">·</span>
+    <a href={`/${suiv.slug}/`} title={suiv.nom}>suivante →</a>
+    <span class="sep" aria-hidden="true">·</span>
+    <a href="/">Retour au choix</a>
+  </p>
+</nav>
+
+<style>
+  .bandeau-version {
+    background: #1f2328;
+    color: #f2f2f2;
+    font: 500 0.8125rem/1.4 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: 0;
+    text-transform: none;
+    position: relative;
+    z-index: 60;
+  }
+  p {
+    margin: 0 auto;
+    max-width: 75rem;
+    padding: 0.4rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.15rem 0.5rem;
+    text-align: center;
+  }
+  strong { font-weight: 650; }
+  a {
+    color: #f2f2f2;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    border-radius: 2px;
+  }
+  a:hover { color: #fff; text-decoration-thickness: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .sep { opacity: 0.6; }
+  @media (max-width: 30rem) {
+    strong { flex-basis: 100%; }
+    .sep:first-of-type { display: none; }
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+// Vidéo YouTube chargée uniquement au clic, en mode confidentialité renforcée (youtube-nocookie).
+import Photo from './Photo.astro';
+import { c } from '../lib/contenu';
+import type { NomPhoto } from '../lib/images';
+
+interface Props {
+  affiche?: NomPhoto;
+  class?: string;
+  sizes?: string;
+}
+const { affiche = 'meute', class: classe = '', sizes = '(min-width: 60rem) 50vw, 100vw' } = Astro.props;
+const id = c.site.youtube_id;
+const titre = c.services.sejours.video.titre;
+---
+
+<div class:list={['kw-video', classe]} data-youtube={id} data-titre={titre}>
+  <Photo nom={affiche} alt="" sizes={sizes} max={1200} class="kw-video__affiche" />
+  <button type="button" class="kw-video__bouton">
+    <svg aria-hidden="true" viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.2.3 34 .3 34 .3s-21.2 0-26.5 1.4a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6C12.8 47.7 34 47.7 34 47.7s21.2 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#c4302b"/><path d="M45 24 27 14v20z" fill="#fff"/></svg>
+    <span>{c.services.sejours.video.bouton}<span class="kw-sr"> : {titre} (YouTube)</span></span>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.kw-video').forEach((bloc) => {
+    bloc.querySelector('button')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${bloc.dataset.youtube}?autoplay=1&rel=0`;
+      iframe.title = bloc.dataset.titre ?? 'Vidéo';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      iframe.className = 'kw-video__iframe';
+      bloc.replaceChildren(iframe);
+      iframe.focus();
+    });
+  });
+</script>

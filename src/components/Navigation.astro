@@ -1,0 +1,39 @@
+---
+// Navigation principale : liste horizontale sur grand écran, menu déroulant
+// accessible (details/summary, sans JavaScript) sur mobile.
+// Classes à styler par version : kw-nav, kw-nav__liste, kw-nav__lien, kw-menu, kw-menu__bouton.
+import { c } from '../lib/contenu';
+
+interface Props { prefixe?: string }
+const { prefixe = '' } = Astro.props; // ex. "/v1/" sur les pages secondaires
+---
+
+<nav class="kw-nav" aria-label="Navigation principale">
+  <ul class="kw-nav__liste">
+    {c.navigation.map((l) => <li><a class="kw-nav__lien" href={`${prefixe}#${l.ancre}`}>{l.libelle}</a></li>)}
+  </ul>
+  <details class="kw-menu">
+    <summary class="kw-menu__bouton">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      <span>Menu</span>
+    </summary>
+    <ul class="kw-menu__liste">
+      {c.navigation.map((l) => <li><a class="kw-nav__lien" href={`${prefixe}#${l.ancre}`}>{l.libelle}</a></li>)}
+    </ul>
+  </details>
+</nav>
+
+<script>
+  // Referme le menu mobile après un clic sur un lien ou avec la touche Échap.
+  document.querySelectorAll<HTMLDetailsElement>('.kw-menu').forEach((menu) => {
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) menu.open = false;
+    });
+    menu.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+  });
+</script>

@@ -1,0 +1,35 @@
+{
+  "name": "kerwouf-beta",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Refonte du site Ker Wouf : 5 propositions de design publiées sur beta.kerwouf.fr",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typo": "node scripts/typographie.mjs",
+    "screenshots": "astro build && node scripts/captures.mjs",
+    "controle": "node scripts/controle.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/baloo-2": "5.3.0",
+    "@fontsource-variable/caveat": "5.3.0",
+    "@fontsource-variable/cormorant-garamond": "5.3.0",
+    "@fontsource-variable/fraunces": "5.3.0",
+    "@fontsource-variable/jost": "5.3.0",
+    "@fontsource-variable/lora": "5.3.0",
+    "@fontsource-variable/manrope": "5.3.0",
+    "@fontsource-variable/nunito": "5.3.0",
+    "@fontsource-variable/source-sans-3": "5.3.1",
+    "astro": "7.4.13",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "playwright": "1.65.1"
+  }
+}

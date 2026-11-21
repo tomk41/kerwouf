@@ -1,0 +1,44 @@
+---
+// Image optimisée (WebP, variantes 400/800/1200/1600 px, jamais agrandie).
+import { Image } from 'astro:assets';
+import { photos, type NomPhoto } from '../lib/images';
+
+interface Props {
+  nom: NomPhoto;
+  /** Attribut sizes : largeur affichée selon l'écran. */
+  sizes?: string;
+  /** Image au-dessus de la ligne de flottaison : chargement prioritaire. */
+  prioritaire?: boolean;
+  /** Largeur maximale générée (px). */
+  max?: number;
+  /** Remplace le texte alternatif (ex. "" pour une image décorative). */
+  alt?: string;
+  class?: string;
+  [attr: string]: unknown;
+}
+
+const { nom, sizes = '100vw', prioritaire = false, max = 1600, alt, class: classe, ...rest } = Astro.props;
+const photo = photos[nom];
+const largeurSource = photo.src.width;
+let widths = [400, 800, 1200, 1600].filter((w) => w <= Math.min(largeurSource, max));
+if (widths.length === 0) widths = [Math.min(largeurSource, max)];
+const largeur = widths[widths.length - 1];
+const hauteur = Math.round((photo.src.height / photo.src.width) * largeur);
+const qualite = 'qualite' in photo ? photo.qualite : 78;
+---
+
+<Image
+  src={photo.src}
+  alt={alt ?? photo.alt}
+  widths={widths}
+  width={largeur}
+  height={hauteur}
+  sizes={sizes}
+  format="webp"
+  quality={qualite}
+  loading={prioritaire ? 'eager' : 'lazy'}
+  decoding={prioritaire ? 'sync' : 'async'}
+  fetchpriority={prioritaire ? 'high' : undefined}
+  class={classe}
+  {...rest}
+/>

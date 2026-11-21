@@ -1,0 +1,35 @@
+---
+// Structure HTML commune à toutes les pages des versions.
+// Slots : "entete" (header de la version), défaut (contenu principal), "pied" (footer).
+import Tete from './Tete.astro';
+import BandeauVersion from './BandeauVersion.astro';
+import { versionParNumero } from '../lib/versions';
+import '../styles/base.css';
+
+interface Props {
+  n: number;
+  titre?: string;
+  description?: string;
+  jsonLd?: boolean;
+  classeBody?: string;
+}
+const { n, titre, description, jsonLd = false, classeBody = '' } = Astro.props;
+const v = versionParNumero(n);
+---
+
+<!doctype html>
+<html lang="fr" class={`version-${v.slug}`}>
+  <head>
+    <Tete titre={titre} description={description} couleur={v.couleur} jsonLd={jsonLd} />
+    <slot name="tete" />
+  </head>
+  <body class={classeBody}>
+    <a class="kw-evitement" href="#contenu">Aller au contenu</a>
+    <BandeauVersion n={n} />
+    <slot name="entete" />
+    <main id="contenu" tabindex="-1">
+      <slot />
+    </main>
+    <slot name="pied" />
+  </body>
+</html>

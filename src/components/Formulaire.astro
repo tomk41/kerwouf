@@ -1,0 +1,71 @@
+---
+// Formulaire de contact commun, envoyé à /contact.php (voir public/contact.php).
+// Le style vient de chaque version : classes kw-form, kw-champ, kw-label, kw-input,
+// kw-aide, kw-case, kw-alerte. Le bouton reçoit la classe passée en `bouton`.
+import { c } from '../lib/contenu';
+
+interface Props {
+  version: string; // v1…v5
+  bouton?: string; // classe CSS du bouton d'envoi
+  class?: string;
+}
+const { version, bouton = 'kw-bouton', class: classe = '' } = Astro.props;
+const f = c.contact.formulaire;
+const id = (nom: string) => `${version}-${nom}`;
+---
+
+<form class:list={['kw-form', classe]} action="/contact.php" method="post" accept-charset="UTF-8">
+  <div class="kw-alerte" role="alert" hidden data-erreur-champs={f.erreur_champs} data-erreur-envoi={f.erreur_envoi}></div>
+
+  <input type="hidden" name="version" value={version} />
+
+  <!-- Piège anti-spam : champ invisible, laissé vide par les humains -->
+  <div class="kw-pot" aria-hidden="true">
+    <label for={id('site')}>Ne pas remplir ce champ</label>
+    <input type="text" id={id('site')} name="site_web" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="kw-champ">
+    <label class="kw-label" for={id('nom')}>{f.nom}</label>
+    <input class="kw-input" type="text" id={id('nom')} name="nom" required maxlength="100" autocomplete="name" />
+  </div>
+
+  <div class="kw-champ">
+    <label class="kw-label" for={id('email')}>{f.email}</label>
+    <input class="kw-input" type="email" id={id('email')} name="email" required maxlength="150" autocomplete="email" />
+  </div>
+
+  <div class="kw-champ">
+    <label class="kw-label" for={id('tel')}>{f.telephone} <span class="kw-facultatif">(conseillé)</span></label>
+    <input class="kw-input" type="tel" id={id('tel')} name="telephone" maxlength="30" autocomplete="tel" aria-describedby={id('tel-aide')} />
+    <p class="kw-aide" id={id('tel-aide')}>{f.telephone_aide}</p>
+  </div>
+
+  <div class="kw-champ kw-champ--large">
+    <label class="kw-label" for={id('message')}>{f.message}</label>
+    <textarea class="kw-input" id={id('message')} name="message" rows="5" required maxlength="5000"></textarea>
+  </div>
+
+  <div class="kw-case">
+    <input type="checkbox" id={id('rgpd')} name="consentement" value="oui" required />
+    <label for={id('rgpd')}>
+      {f.consentement}
+      <a href={`/${version}/confidentialite/`}>{f.lien_confidentialite}</a>
+    </label>
+  </div>
+
+  <p class="kw-regle">{c.reservation.regle}</p>
+
+  <button type="submit" class={bouton}>{f.bouton}</button>
+</form>
+
+<script>
+  // Affiche l'erreur renvoyée par contact.php (?erreur=champs|envoi)
+  const erreur = new URLSearchParams(location.search).get('erreur');
+  if (erreur === 'champs' || erreur === 'envoi') {
+    document.querySelectorAll<HTMLElement>('.kw-alerte').forEach((el) => {
+      el.textContent = el.dataset[erreur === 'champs' ? 'erreurChamps' : 'erreurEnvoi'] ?? '';
+      el.hidden = false;
+    });
+  }
+</script>
