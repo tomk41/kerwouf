@@ -1,0 +1,127 @@
+---
+// Simulateur de prix : calcule une estimation à partir des SEULS tarifs de
+// content/kerwouf-refonte.md (lus au moment de la construction du site).
+import { c, lienTel } from '../../lib/contenu';
+
+const s = c.services;
+const montant = (prix: string) => Number(prix.replace(/[^\d]/g, ''));
+
+export interface Formule { id: string; libelle: string; prix: number; unite: 'jour' | 'nuit'; pension: boolean; note: string }
+
+const formules: Formule[] = [
+  ...s.journee.offres.flatMap((o) =>
+    o.tarifs.map((t, i) => ({
+      id: `${o.id}-${i + 1}`,
+      libelle: `${o.titre} – ${t.libelle} (${t.prix} par jour)`,
+      prix: montant(t.prix),
+      unite: 'jour' as const,
+      pension: false,
+      note: s.journee.horaires,
+    })),
+  ),
+  ...s.sejours.offres.map((o) => ({
+    id: o.id,
+    libelle: `${o.titre} – ${o.periode} (${o.prix} ${o.unite})`,
+    prix: montant(o.prix),
+    unite: 'nuit' as const,
+    pension: true,
+    note: o.arrivee_depart,
+  })),
+];
+const donnees = {
+  formules,
+  navette: montant(s.woufmobil.prix),
+  libelles: { jours: c.simulateur.quantite_jours, nuits: c.simulateur.quantite_nuits },
+};
+const t = c.simulateur;
+---
+
+<div class="sim" data-simulateur>
+  <p class="sim__sansjs">{t.sans_js}</p>
+  <form class="sim__form" hidden aria-describedby="sim-mention">
+    <div class="sim__champ">
+      <label class="sim__label" for="sim-formule">{t.prestation}</label>
+      <select id="sim-formule" name="formule" class="sim__select">
+        {formules.map((f) => <option value={f.id}>{f.libelle}</option>)}
+      </select>
+      <p class="sim__note" id="sim-note">{formules[0].note}</p>
+    </div>
+
+    <div class="sim__champ">
+      <label class="sim__label" for="sim-quantite" id="sim-quantite-label">{t.quantite_jours}</label>
+      <div class="sim__compteur">
+        <button type="button" class="sim__pas" data-pas="-1" aria-label="Retirer 1">−</button>
+        <input id="sim-quantite" name="quantite" type="number" inputmode="numeric" min="1" max="60" value="1" class="sim__nombre" />
+        <button type="button" class="sim__pas" data-pas="1" aria-label="Ajouter 1">+</button>
+      </div>
+    </div>
+
+    <fieldset class="sim__champ sim__navette" id="sim-navette">
+      <legend class="sim__label">{t.navette} ({s.woufmobil.prix} {s.woufmobil.unite})</legend>
+      <label class="sim__case"><input type="checkbox" name="aller" /> {t.aller}</label>
+      <label class="sim__case"><input type="checkbox" name="retour" /> {t.retour}</label>
+      <p class="sim__note">{t.navette_note}</p>
+    </fieldset>
+
+    <div class="sim__resultat" role="status" aria-live="polite">
+      <ul class="sim__detail" id="sim-detail"></ul>
+      <p class="sim__total"><span>{t.total}</span> <strong id="sim-total">—</strong></p>
+    </div>
+    <p class="sim__mention" id="sim-mention">{t.mention}</p>
+    <a class="bouton bouton--vert" href={lienTel}>{t.bouton}</a>
+  </form>
+  <script type="application/json" id="sim-donnees" set:html={JSON.stringify(donnees)} />
+</div>
+
+<script>
+  type Formule = { id: string; libelle: string; prix: number; unite: 'jour' | 'nuit'; pension: boolean; note: string };
+  const racine = document.querySelector<HTMLElement>('[data-simulateur]');
+  const brut = document.getElementById('sim-donnees')?.textContent;
+  if (racine && brut) {
+    const d = JSON.parse(brut) as { formules: Formule[]; navette: number; libelles: { jours: string; nuits: string } };
+    const form = racine.querySelector('form')!;
+    const choix = form.querySelector<HTMLSelectElement>('#sim-formule')!;
+    const quantite = form.querySelector<HTMLInputElement>('#sim-quantite')!;
+    const label = form.querySelector('#sim-quantite-label')!;
+    const note = form.querySelector('#sim-note')!;
+    const navette = form.querySelector<HTMLFieldSetElement>('#sim-navette')!;
+    const aller = form.querySelector<HTMLInputElement>('[name=aller]')!;
+    const retour = form.querySelector<HTMLInputElement>('[name=retour]')!;
+    const detail = form.querySelector('#sim-detail')!;
+    const total = form.querySelector('#sim-total')!;
+    const euros = (n: number) => `${n.toLocaleString('fr-FR')} €`;
+
+    const calculer = () => {
+      const f = d.formules.find((x) => x.id === choix.value) ?? d.formules[0];
+      const n = Math.min(60, Math.max(1, Math.round(Number(quantite.value) || 1)));
+      label.textContent = f.unite === 'nuit' ? d.libelles.nuits : d.libelles.jours;
+      note.textContent = f.note;
+      navette.disabled = !f.pension;
+      if (!f.pension) { aller.checked = false; retour.checked = false; }
+      const trajets = (aller.checked ? 1 : 0) + (retour.checked ? 1 : 0);
+      const lignes = [`${euros(f.prix)} × ${n} ${f.unite}${n > 1 ? 's' : ''} = ${euros(f.prix * n)}`];
+      if (trajets) lignes.push(`Navette : ${trajets} trajet${trajets > 1 ? 's' : ''} × ${euros(d.navette)} = ${euros(trajets * d.navette)}`);
+      detail.replaceChildren(...lignes.map((l) => Object.assign(document.createElement('li'), { textContent: l })));
+      total.textContent = euros(f.prix * n + trajets * d.navette);
+    };
+
+    form.querySelectorAll<HTMLButtonElement>('[data-pas]').forEach((b) =>
+      b.addEventListener('click', () => {
+        quantite.value = String(Math.min(60, Math.max(1, (Number(quantite.value) || 1) + Number(b.dataset.pas))));
+        calculer();
+      }),
+    );
+    form.addEventListener('input', calculer);
+    form.addEventListener('change', calculer);
+    form.addEventListener('submit', (e) => e.preventDefault());
+
+    // Boutons « Estimer » des cartes : présélectionnent la formule
+    document.querySelectorAll<HTMLAnchorElement>('[data-formule]').forEach((a) =>
+      a.addEventListener('click', () => { choix.value = a.dataset.formule!; calculer(); }),
+    );
+
+    racine.querySelector('.sim__sansjs')?.remove();
+    form.hidden = false;
+    calculer();
+  }
+</script>

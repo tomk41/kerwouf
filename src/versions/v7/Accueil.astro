@@ -1,0 +1,229 @@
+---
+import Layout from './Layout.astro';
+import Simulateur from './Simulateur.astro';
+import Photo from '../../components/Photo.astro';
+import Icone from '../../components/Icone.astro';
+import Video from '../../components/Video.astro';
+import Formulaire from '../../components/Formulaire.astro';
+import { c, lienTel, lienSms, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import { photoTemoignage } from '../../lib/images';
+
+const s = c.services;
+const [chien, chat] = s.journee.offres;
+const [we, vacances] = s.sejours.offres;
+const wm = s.woufmobil;
+---
+
+<Layout accueil>
+  <section class="intro cadre" aria-labelledby="titre-accroche">
+    <div class="intro__texte">
+      <p class="pastille"><Icone nom="patte" taille={16} />{c.accroche.surtitre}</p>
+      <h1 id="titre-accroche">{c.accroche.titre}</h1>
+      <p class="intro__sous">{c.accroche.sous_titre}</p>
+      <p>{c.accroche.texte}</p>
+      <div class="actions">
+        <a class="bouton bouton--vert" href={lienTel}><Icone nom="tel" taille={20} />{c.accroche.bouton_principal}</a>
+        <a class="bouton bouton--clair" href="#simulateur">{c.simulateur.titre}</a>
+      </div>
+    </div>
+    <div class="intro__visuel kw-accroche-max">
+      <Photo nom="accroche" prioritaire sizes="(min-width: 64rem) 46vw, 100vw" class="intro__photo" />
+      <ul class="intro__atouts">{c.accroche.atouts.map((a) => <li><Icone nom="check" taille={16} />{a}</li>)}</ul>
+    </div>
+  </section>
+
+  <!-- Formules -->
+  <section id="services" class="section cadre" aria-labelledby="titre-services">
+    <header class="tete">
+      <h2 id="titre-services">{s.titre}</h2>
+      <p>{s.intro}</p>
+    </header>
+
+    <h3 class="groupe">{s.sejours.titre} · {s.sejours.sous_titre}</h3>
+    <div class="cartes">
+      {[we, vacances].map((o) => (
+        <article class="carte">
+          <div class="carte__tete">
+            <span class="carte__icone carte__icone--bleu"><Icone nom="maison" taille={24} /></span>
+            <div><h4>{o.titre}</h4><p class="carte__tag">{o.periode}</p></div>
+          </div>
+          <p class="carte__prix"><strong>{o.prix}</strong> {o.unite}</p>
+          <ul class="infos">
+            <li><Icone nom="horloge" taille={18} />{o.arrivee_depart}</li>
+            <li><Icone nom="navette" taille={18} />{o.navette}</li>
+          </ul>
+          <a class="bouton bouton--clair bouton--plein" href="#simulateur" data-formule={o.id}>{c.simulateur.titre}</a>
+        </article>
+      ))}
+    </div>
+    <ul class="inclus">{s.sejours.inclus.map((x) => <li><Icone nom="check" taille={18} />{x}</li>)}</ul>
+
+    <h3 class="groupe">{s.journee.titre} · {s.journee.sous_titre}</h3>
+    <p class="groupe__note"><Icone nom="horloge" taille={18} />{s.journee.horaires}</p>
+    <div class="cartes">
+      {[chien, chat].map((o) => (
+        <article class="carte">
+          <div class="carte__tete">
+            <span class="carte__icone carte__icone--vert"><Icone nom={o.id === 'chat' ? 'chat' : 'chien'} taille={24} /></span>
+            <div><h4>{o.titre}</h4><p class="carte__tag">{o.accroche}</p></div>
+          </div>
+          <ul class="carte__tarifs">{o.tarifs.map((t) => <li><span>{t.libelle}</span><strong>{t.prix}</strong></li>)}</ul>
+          <p>{o.texte}</p>
+          <ul class="infos">
+            {o.inclus.map((x) => <li><Icone nom="check" taille={18} />{x}</li>)}
+            <li><Icone nom="maison" taille={18} />{o.acces}</li>
+          </ul>
+          <a class="bouton bouton--clair bouton--plein" href="#simulateur" data-formule={`${o.id}-1`}>{c.simulateur.titre}</a>
+        </article>
+      ))}
+    </div>
+
+    <article class="carte carte--wm" aria-labelledby="titre-wm">
+      <div>
+        <div class="carte__tete">
+          <span class="carte__icone carte__icone--orange"><Icone nom="navette" taille={24} /></span>
+          <div><h3 id="titre-wm">{wm.titre}</h3><p class="carte__tag">{wm.slogan}</p></div>
+        </div>
+        <p class="carte__prix"><strong>{wm.prix}</strong> {wm.unite} <span class="carte__mention">· {wm.mention_prix}</span></p>
+        <p>{wm.texte}</p>
+        <ul class="infos">
+          {wm.trajets.map((t) => <li><Icone nom="fleche" taille={18} /><span><strong>{t.sens}</strong> {t.quand}</span></li>)}
+          {wm.securite.map((x) => <li><Icone nom="bouclier" taille={18} />{x}</li>)}
+        </ul>
+      </div>
+      <Photo nom="woufmobil" sizes="(min-width: 64rem) 360px, 80vw" max={800} class="carte__illu" />
+    </article>
+
+    <p class="alerte"><Icone nom="info" taille={22} /><span>{c.reservation.regle}</span></p>
+  </section>
+
+  <!-- Simulateur -->
+  <section id="simulateur" class="section section--teinte" aria-labelledby="titre-simulateur">
+    <div class="cadre simulateur">
+      <header class="tete">
+        <h2 id="titre-simulateur">{c.simulateur.titre}</h2>
+        <p>{c.simulateur.intro}</p>
+      </header>
+      <Simulateur />
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section cadre faq" aria-labelledby="titre-faq">
+    <header class="tete">
+      <h2 id="titre-faq">{c.faq.titre}</h2>
+    </header>
+    <div class="faq__liste">
+      {c.faq.items.map((q) => (
+        <details class="faq__item">
+          <summary><span>{q.question}</span><Icone nom="fleche" taille={20} class="faq__chevron" /></summary>
+          <p>{q.reponse}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- Nivillac -->
+  <section id="nivillac" class="section section--teinte" aria-labelledby="titre-nivillac">
+    <div class="cadre">
+      <header class="tete">
+        <p class="pastille">{c.nivillac.sous_titre}</p>
+        <h2 id="titre-nivillac">{c.nivillac.titre}</h2>
+      </header>
+      <ul class="stats">{c.nivillac.chiffres.map((ch) => <li><strong>{ch.valeur}</strong><span>{ch.libelle}</span></li>)}</ul>
+      <div class="nivillac">
+        <div class="carte carte--texte">{c.nivillac.paragraphes.map((p) => <p>{p}</p>)}</div>
+        <ul class="defile" aria-label={c.nivillac.titre} tabindex="0">
+          <li><Photo nom="maison" sizes="(min-width: 64rem) 22rem, 75vw" max={800} /></li>
+          <li><Photo nom="etable" sizes="(min-width: 64rem) 22rem, 75vw" max={800} /></li>
+          <li><Photo nom="box" sizes="(min-width: 64rem) 22rem, 75vw" max={800} /></li>
+          <li><Photo nom="verger" sizes="(min-width: 64rem) 22rem, 75vw" max={800} /></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Journée type + vidéo -->
+  <section class="section cadre journee" aria-labelledby="titre-journee">
+    <div>
+      <h2 id="titre-journee">{c.journee_type.titre}</h2>
+      <p class="journee__intro">{c.journee_type.intro}</p>
+      <ol class="etapes">
+        {c.journee_type.etapes.map((e) => <li><p class="etapes__moment">{e.moment}</p><h3>{e.titre}</h3><p>{e.texte}</p></li>)}
+      </ol>
+    </div>
+    <div class="carte carte--video">
+      <Video sizes="(min-width: 64rem) 40vw, 100vw" />
+      <h3>{s.sejours.video.titre}</h3>
+      <p>{s.sejours.video.texte}</p>
+    </div>
+  </section>
+
+  <!-- Qui suis-je -->
+  <section id="qui-suis-je" class="section section--teinte" aria-labelledby="titre-qui">
+    <div class="cadre qui">
+      <article class="carte profil">
+        <Photo nom="theotine" sizes="(min-width: 64rem) 22rem, 100vw" max={800} class="profil__photo" />
+        <h2 id="titre-qui">{c.qui.titre}</h2>
+        <p class="carte__tag">{c.qui.accroche}</p>
+        <p class="profil__diplome"><Icone nom="diplome" taille={20} />{c.qui.formation.texte}</p>
+      </article>
+      <div class="qui__texte">
+        {c.qui.paragraphes.map((p) => <p>{p}</p>)}
+        <h3>{c.qui.experiences.titre}</h3>
+        <div class="xp">
+          {c.qui.experiences.groupes.map((g) => (
+            <div class="carte carte--xp">
+              <h4>{g.titre}</h4>
+              <ul>{g.items.map((x) => <li><span>{x.texte}</span><span class="badge">{x.duree}</span></li>)}</ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Avis -->
+  <section id="temoignages" class="section cadre" aria-labelledby="titre-avis">
+    <header class="tete">
+      <h2 id="titre-avis">{c.temoignages.titre}</h2>
+      <p>{c.temoignages.intro}</p>
+    </header>
+    <ul class="defile defile--avis" aria-label={c.temoignages.titre} tabindex="0">
+      {c.temoignages.items.map((t) => (
+        <li>
+          <figure class="carte avis">
+            <div class="avis__tete">
+              <Photo nom={photoTemoignage[t.chien]} sizes="56px" max={400} class="avis__photo" />
+              <figcaption><strong>{t.chien}</strong><span>{t.prestation}</span></figcaption>
+            </div>
+            <blockquote><p>« {t.citation} »</p></blockquote>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section section--teinte" aria-labelledby="titre-contact">
+    <div class="cadre contact">
+      <div>
+        <h2 id="titre-contact">{c.contact.titre}</h2>
+        <p>{c.contact.texte}</p>
+        <div class="raccourcis">
+          <a class="raccourci" href={lienTel}><Icone nom="tel" taille={24} /><span><strong>{c.contact.bouton_appel}</strong>{telAffiche}</span></a>
+          <a class="raccourci" href={lienSms}><Icone nom="sms" taille={24} /><span><strong>{c.contact.bouton_sms}</strong>{telAffiche}</span></a>
+          <a class="raccourci" href={lienMail}><Icone nom="mail" taille={24} /><span><strong>{c.contact.bouton_email}</strong>{c.site.email}</span></a>
+        </div>
+        <p class="contact__ligne"><Icone nom="horloge" taille={20} />{c.contact.disponibilite}</p>
+        <p class="contact__ligne"><Icone nom="lieu" taille={20} />{adresseLigne}</p>
+        <p class="alerte"><Icone nom="info" taille={22} /><span>{c.reservation.regle}</span></p>
+      </div>
+      <div class="carte">
+        <h3>{c.contact.formulaire.titre}</h3>
+        <p>{c.contact.formulaire.intro}</p>
+        <Formulaire version="v7" bouton="bouton bouton--bleu" />
+      </div>
+    </div>
+  </section>
+</Layout>

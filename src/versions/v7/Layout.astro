@@ -1,0 +1,56 @@
+---
+import { lien } from '../../lib/chemins';
+import Squelette from '../../components/Squelette.astro';
+import Navigation from '../../components/Navigation.astro';
+import Photo from '../../components/Photo.astro';
+import Icone from '../../components/Icone.astro';
+import { c, lienTel, lienSms, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import '@fontsource-variable/plus-jakarta-sans';
+import './styles.css';
+
+interface Props { titre?: string; description?: string; accueil?: boolean }
+const { titre, description, accueil = false } = Astro.props;
+const prefixe = accueil ? '' : lien('v7/');
+---
+
+<Squelette n={7} titre={titre ? `${titre} – Ker Wouf` : undefined} description={description} jsonLd={accueil} classeBody="avec-barre">
+  <header slot="entete" class="barre-haut">
+    <div class="cadre barre-haut__in">
+      <a class="marque" href={lien('v7/')}>
+        <Photo nom="logo" max={200} sizes="40px" class="marque__logo" alt="" prioritaire />
+        <span>{c.site.nom}</span>
+      </a>
+      <Navigation prefixe={prefixe} />
+      <a class="bouton bouton--vert bouton--petit barre-haut__tel" href={lienTel}><Icone nom="tel" taille={18} />{telAffiche}</a>
+    </div>
+  </header>
+
+  <slot />
+
+  <Fragment slot="pied">
+  <footer class="pied">
+    <div class="cadre pied__in">
+      <div>
+        <p class="pied__nom">{c.site.nom}</p>
+        <p>{c.site.baseline}</p>
+      </div>
+      <address>
+        <p>{adresseLigne}</p>
+        <p><a href={lienTel}>{telAffiche}</a> · <a href={lienMail}>{c.site.email}</a></p>
+      </address>
+      <p class="pied__liens">
+        <a href={lien('v7/mentions-legales/')}>{c.pied_de_page.mentions}</a>
+        <a href={lien('v7/confidentialite/')}>{c.pied_de_page.confidentialite}</a>
+      </p>
+    </div>
+    <p class="pied__copy">© 2026 {c.site.nom}</p>
+  </footer>
+
+  <!-- Barre d'actions fixe en bas d'écran (mobile) -->
+  <nav class="barre-bas" aria-label="Actions rapides">
+    <a href={lienTel}><Icone nom="tel" taille={22} /><span>{c.contact.bouton_appel}</span></a>
+    <a href={lienSms}><Icone nom="sms" taille={22} /><span>{c.contact.bouton_sms}</span></a>
+    <a href={accueil ? '#contact' : lien('v7/#contact')}><Icone nom="mail" taille={22} /><span>{c.libelles.formulaire_court}</span></a>
+  </nav>
+  </Fragment>
+</Squelette>
