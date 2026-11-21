@@ -4,6 +4,7 @@ import Navigation from '../../components/Navigation.astro';
 import Photo from '../../components/Photo.astro';
 import { c, lienTel, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
 import '@fontsource-variable/caveat';
+import caveatLatin from '@fontsource-variable/caveat/files/caveat-latin-wght-normal.woff2?url';
 import '@fontsource-variable/lora';
 import './styles.css';
 
@@ -13,6 +14,7 @@ const prefixe = accueil ? '' : '/v4/';
 ---
 
 <Squelette n={4} titre={titre ? `${titre} – Ker Wouf` : undefined} description={description} jsonLd={accueil}>
+  <link slot="tete" rel="preload" href={caveatLatin} as="font" type="font/woff2" crossorigin />
   <header slot="entete" class="entete">
     <div class="page entete__in">
       <a class="marque" href="/v4/">
