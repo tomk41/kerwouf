@@ -172,6 +172,24 @@ Seules les fautes ont été corrigées (en gras ci-dessous).
 | — | Formulaire : « Ou laissez-moi un message » · « Indiquez les dates, votre chien (ou votre chat) et la formule qui vous intéresse : je reviens vers vous par téléphone pour en parler. » |
 | — | Page de remerciement : « Merci, votre message est bien parti ! » · « Je vous recontacte dès que possible. Pour rappel, votre réservation sera confirmée après un échange par téléphone ou SMS. » |
 
+## Nouveaux textes des versions 6 à 8
+
+Ces textes sont nouveaux, mais ils ne reprennent que des informations déjà présentes sur ton site : horaires, tarifs, capacité, navette, formation. Aucune règle ni aucun tarif n'a été inventé.
+
+| Où | Texte |
+|---|---|
+| v6 – Récit, titre | « Le séjour de votre chien, en images » · « De l’arrivée au retour, suivez un séjour à la pension de Nivillac. » |
+| v6 – 1. L’arrivée | « Le week-end, votre chien arrive le vendredi à partir de 19 h. Pendant les vacances scolaires, de 7 h à 20 h, 7 j/7. Pas le temps de faire la route ? La navette part de Nantes le vendredi soir. » |
+| v6 – 2. Au bord de la Vilaine | « Balades dans la campagne morbihannaise et sur les sentiers paisibles qui bordent la Vilaine. » |
+| v6 – 3. Jeux et copains | « Dehors de 8 h à 18 h : jeux dans le verger et dans le grand jardin de plus de 1 000 m², moments entre chiens toujours encadrés. » |
+| v6 – 4. Repos au chaud | « Le soir, chacun retrouve son box, chauffé en hiver, et son tapis moelleux. J’habite juste à côté : je veille sur la petite troupe. » **(à confirmer, voir point 1)** |
+| v6 – 5. Le retour | « Départ le dimanche avant 18 h 30, ou retour en navette vers Nantes le dimanche soir, vers 20 h. » |
+| v7 – Simulateur | « Estimez le prix de la garde ». Le calcul utilise uniquement les tarifs du site : visites 20 €/30 € (chien) et 12 €/20 € (chat) par jour, pension 22 € la nuit, navette 15 € par trajet. Mention : « Estimation indicative, réservation confirmée par téléphone ou SMS. » |
+| v7 – Simulateur, navette | « La navette relie Nantes et Nivillac : elle concerne les séjours en pension. » **(à confirmer : la navette est-elle bien réservée aux séjours en pension ?)** |
+| v7 – FAQ | 12 questions-réponses : comment réserver, prix de la pension, horaires d’arrivée et de départ, navette, nombre de chiens, chien seul, journée type, visites à domicile, accès au domicile, médicaments, formation, adresse. Les réponses reprennent mot pour mot les informations du site. |
+| v7 – FAQ, médicaments | « Oui, lors des visites à domicile, la prise de médicaments est possible si besoin. » **(à confirmer : est-ce aussi possible en pension ? Le site actuel ne le dit pas.)** |
+| v8 – Badges | « Depuis 2025 » (lancement de ta pension) · « 8 chiens maximum » |
+
 ## Nouvelles pages
 
 - **Mentions légales** : éditrice, SIRET, hébergeur, propriété des textes et photos.

@@ -8,9 +8,10 @@ import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdirSync } from 'node:fs';
 import { demarrerPreview } from './preview.mjs';
+import { versions as listeVersions } from '../src/lib/versions.ts';
 
 const args = process.argv.slice(2);
-const versions = args.length ? args : ['v1', 'v2', 'v3', 'v4', 'v5'];
+const versions = args.length ? args : listeVersions.map((v) => v.slug);
 const pages = [
   ...(args.length ? [] : ['/', '/corrections/', '/page-inexistante/']),
   ...versions.flatMap((v) => [`/${v}/`, `/${v}/mentions-legales/`, `/${v}/confidentialite/`, `/${v}/merci/`]),

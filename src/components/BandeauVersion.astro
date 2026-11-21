@@ -1,7 +1,7 @@
 ---
 import { lien } from '../lib/chemins';
-// Bandeau fin en haut de chaque version : « Version N/5 – nom · ← précédente · suivante → · Retour au choix »
-import { versionParNumero, precedente, suivante } from '../lib/versions';
+// Bandeau fin en haut de chaque version : « Version N/8 – nom · ← précédente · suivante → · Retour au choix »
+import { versions, versionParNumero, precedente, suivante } from '../lib/versions';
 
 interface Props { n: number }
 const { n } = Astro.props;
@@ -12,7 +12,7 @@ const suiv = suivante(n);
 
 <nav class="bandeau-version" aria-label="Choix de la version du site">
   <p>
-    <strong>Version {n}/5 – {v.nom}</strong>
+    <strong>Version {n}/{versions.length} – {v.nom}</strong>
     <span class="sep" aria-hidden="true">·</span>
     <a href={lien(`${prec.slug}/`)} title={prec.nom}>← précédente</a>
     <span class="sep" aria-hidden="true">·</span>

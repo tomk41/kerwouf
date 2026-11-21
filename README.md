@@ -1,14 +1,27 @@
 # Ker Wouf : refonte du site (bêta)
 
 Nouveau site de **Ker Wouf**, garde de chiens et pension familiale à Nivillac.
-Cinq propositions de design sont publiées sur **https://kerwouf.fr/beta/** pour que Théotine choisisse la sienne.
+Huit propositions de design sont publiées sur **https://kerwouf.fr/beta/** pour que Théotine choisisse la sienne.
 La bêta vit dans le dossier `www/beta/` de l'hébergement OVH, à côté du site actuel (WordPress), qui n'est pas touché.
 
 | Adresse | Contenu |
 |---|---|
-| `/beta/` | Page de choix : les 5 versions avec captures d'écran |
-| `/beta/v1/` … `/beta/v5/` | Les 5 versions (avec mentions légales, confidentialité, page « merci ») |
+| `/beta/` | Page de choix : les 8 versions avec captures d'écran |
+| `/beta/v1/` … `/beta/v8/` | Les 8 versions (avec mentions légales, confidentialité, page « merci ») |
 | `/beta/corrections/` | Relecture des textes : avant / après |
+
+Les 8 versions (liste dans `src/lib/versions.ts`, code dans `src/versions/vN/`) :
+
+| | Version | En bref |
+|---|---|---|
+| v1 | Campagne chaleureuse | Vert sauge, crème et terracotta, serif douce, grande photo plein écran |
+| v2 | Moderne épurée | Blanc, grande typographie, accent bleu-vert « Vilaine », tarifs en tableau comparatif |
+| v3 | Ludique et joyeuse | Couleurs vives, formes arrondies, empreintes de pattes, animations |
+| v4 | Carnet de balade breton | Ardoise, lande, papier, titres manuscrits, polaroïds, journée type mise en avant |
+| v5 | Boutique premium | Éditorial, serif élégante, noir chaud et beige, grandes photos |
+| v6 | Récit photo | Défilement immersif qui raconte le séjour d'un chien, photos en grand, effets de défilement en CSS |
+| v7 | Pratique et réservation | Style application : cartes de services, simulateur de prix, FAQ, barre d'appel fixe sur mobile |
+| v8 | Rétro illustré | Années 70 : moutarde, orange brûlé, vert olive, crème, badges, illustrations SVG |
 
 ---
 
@@ -27,7 +40,7 @@ La bêta vit dans le dossier `www/beta/` de l'hébergement OVH, à côté du sit
 
 ## 1. Comment c'est organisé
 
-- **Un seul texte pour les 5 versions** : `content/kerwouf-refonte.md`. Modifier ce fichier modifie les 5 versions en même temps.
+- **Un seul texte pour les 8 versions** : `content/kerwouf-refonte.md`. Modifier ce fichier modifie les 8 versions en même temps. Le récit (v6), le simulateur et la FAQ (v7) et les badges (v8) y sont aussi.
 - Le texte d'origine du site WordPress est archivé dans `content/kerwouf.md` (référence, à ne pas modifier).
 - `CORRECTIONS.md` liste les changements de texte (avant / après) et les points à confirmer.
 - Les pages légales sont dans `content/mentions-legales.md` et `content/confidentialite.md`.
@@ -175,7 +188,7 @@ Exemple avec la version 3 choisie. Le nouveau site remplacera le WordPress à la
    - garder cette archive : le site actuel pourra être restauré si besoin.
 2. **Ne garder que la version choisie** :
    - déplacer le contenu de `src/pages/v3/` dans `src/pages/` (`index.astro`, `mentions-legales.astro`, `confidentialite.astro`, `merci.astro`) ;
-   - supprimer `src/pages/v1…v5/`, `src/pages/corrections.astro`, les autres `src/versions/vN/`, `public/captures/` et `src/components/BandeauVersion.astro` (et son appel dans `Squelette.astro`) ;
+   - supprimer `src/pages/v1…v8/`, `src/pages/corrections.astro`, les autres `src/versions/vN/`, `public/captures/` et `src/components/BandeauVersion.astro` (et son appel dans `Squelette.astro`) ;
    - remplacer les liens `lien('v3/…')` par `lien('…')` (dans `src/versions/v3/`, `Formulaire.astro` et `content/mentions-legales.md`).
 3. **Passer à la racine du domaine** :
    - `astro.config.mjs` : supprimer `base: '/beta'` et mettre `site: 'https://www.kerwouf.fr'`. Tous les liens passent par `lien()`, ils suivent automatiquement ;

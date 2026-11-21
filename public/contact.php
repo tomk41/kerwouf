@@ -1,7 +1,7 @@
 <?php
 /**
  * Formulaire de contact Ker Wouf (bêta).
- * Reçoit le POST des 5 versions, valide, envoie un e-mail à Ker Wouf,
+ * Reçoit le POST des 8 versions, valide, envoie un e-mail à Ker Wouf,
  * puis redirige vers /beta/vN/merci/ (ou vers /beta/vN/?erreur=…#contact).
  * Compatible PHP 7.4 et 8.x (hébergement mutualisé OVH).
  */
@@ -9,7 +9,7 @@
 const DESTINATAIRE = 'kerwouf@gmail.com';
 const EXPEDITEUR = 'no-reply@kerwouf.fr';     // doit être sur le domaine kerwouf.fr
 const NOM_EXPEDITEUR = 'Site Ker Wouf (bêta)';
-const VERSIONS = ['v1', 'v2', 'v3', 'v4', 'v5'];
+const VERSIONS = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8'];
 const BASE = '/beta';                         // préfixe du site (base dans astro.config.mjs)
 
 function rediriger(string $chemin): void

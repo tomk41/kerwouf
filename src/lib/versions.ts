@@ -1,7 +1,7 @@
-// Les 5 propositions de design. L'ordre définit la navigation « précédente / suivante ».
+// Les propositions de design (8). L'ordre définit la navigation « précédente / suivante ».
 export interface Version {
   n: number;
-  slug: string; // v1…v5, utilisé dans l'URL
+  slug: string; // v1…v8, utilisé dans l'URL
   nom: string;
   description: string; // 2 lignes pour la page de choix
   couleur: string; // couleur de thème (meta theme-color)
@@ -28,8 +28,21 @@ export const versions: Version[] = [
     n: 5, slug: 'v5', nom: 'Boutique premium', couleur: '#211d1a',
     description: 'Mise en page éditoriale, serif élégante, noir chaud et beige. Grandes photos pleine largeur et beaucoup de respiration.',
   },
+  {
+    n: 6, slug: 'v6', nom: 'Récit photo', couleur: '#14181c',
+    description: 'Un défilement immersif qui raconte le séjour d’un chien, de l’arrivée au retour. Photos en grand, texte court en surimpression.',
+  },
+  {
+    n: 7, slug: 'v7', nom: 'Pratique et réservation', couleur: '#1f3a8a',
+    description: 'Style application, tout pour réserver vite : cartes de services claires, simulateur de prix, FAQ et barre d’appel sur mobile.',
+  },
+  {
+    n: 8, slug: 'v8', nom: 'Rétro illustré', couleur: '#b1461a',
+    description: 'Ambiance années 70 : moutarde, orange brûlé, vert olive et crème, titres à empattements épais, badges et petites illustrations.',
+  },
 ];
 
 export const versionParNumero = (n: number) => versions[n - 1];
-export const precedente = (n: number) => versions[(n + 3) % 5];
-export const suivante = (n: number) => versions[n % 5];
+// Navigation en boucle : la précédente de v1 est la dernière, la suivante de la dernière est v1.
+export const precedente = (n: number) => versions[(n - 2 + versions.length) % versions.length];
+export const suivante = (n: number) => versions[n % versions.length];

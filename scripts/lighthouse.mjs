@@ -7,6 +7,7 @@ import * as chromeLauncher from 'chrome-launcher';
 import { chromium } from 'playwright';
 import desktopConfig from 'lighthouse/core/config/desktop-config.js';
 import { demarrerPreview } from './preview.mjs';
+import { versions } from '../src/lib/versions.ts';
 
 const desktop = process.argv.includes('--desktop');
 // --cpu=2 : calibre le ralentissement CPU simulé sur une machine lente (voir
@@ -14,7 +15,7 @@ const desktop = process.argv.includes('--desktop');
 const cpu = Number(process.argv.find((a) => a.startsWith('--cpu='))?.split('=')[1] ?? 4);
 const arg = (nom) => process.argv.find((a) => a.startsWith(`--${nom}=`))?.split('=')[1];
 const essais = Number(arg('essais') ?? 1);
-const pages = arg('page') ? [arg('page')] : ['/', '/v1/', '/v2/', '/v3/', '/v4/', '/v5/'];
+const pages = arg('page') ? [arg('page')] : ['/', ...versions.map((v) => `/${v.slug}/`)];
 const { url, arreter } = await demarrerPreview();
 const chrome = await chromeLauncher.launch({ chromePath: chromium.executablePath(), chromeFlags: ['--headless=new'] });
 let ok = true;

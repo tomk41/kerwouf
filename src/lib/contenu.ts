@@ -56,10 +56,18 @@ export interface Contenu {
     };
   };
   merci: { titre: string; texte: string; bouton: string };
+  recit: { titre: string; intro: string; chapitres: { titre: string; texte: string }[] };
+  simulateur: {
+    titre: string; intro: string; prestation: string; quantite_jours: string; quantite_nuits: string;
+    navette: string; navette_note: string; aller: string; retour: string; total: string;
+    mention: string; bouton: string; sans_js: string;
+  };
+  faq: { titre: string; items: { question: string; reponse: string }[] };
   libelles: {
     services: string; tableau_tarifs: string; important: string; navette: string;
     journee: string; contact: string; contact_accroche: string; en_bref: string;
     horaires: string; navette_court: string;
+    badge_depuis: string; badge_capacite: string; formulaire_court: string;
   };
   pied_de_page: { mentions: string; confidentialite: string };
 }
