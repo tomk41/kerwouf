@@ -1,0 +1,220 @@
+---
+import Layout from './Layout.astro';
+import Photo from '../../components/Photo.astro';
+import Video from '../../components/Video.astro';
+import Formulaire from '../../components/Formulaire.astro';
+import { c, lienTel, lienSms, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import { photoTemoignage } from '../../lib/images';
+
+const s = c.services;
+const [chien, chat] = s.journee.offres;
+const [we, vacances] = s.sejours.offres;
+const wm = s.woufmobil;
+
+// Lignes du tableau comparatif
+const lignes = [
+  { formule: chien.titre, type: s.journee.sous_titre, quand: s.journee.horaires, details: chien.inclus.join(' · '), prix: chien.tarifs },
+  { formule: chat.titre, type: s.journee.sous_titre, quand: s.journee.horaires, details: chat.inclus.join(' · '), prix: chat.tarifs },
+  { formule: we.titre, type: we.periode, quand: we.arrivee_depart, details: we.navette, prix: [{ libelle: we.unite, prix: we.prix }] },
+  { formule: vacances.titre, type: vacances.periode, quand: vacances.arrivee_depart, details: vacances.navette, prix: [{ libelle: vacances.unite, prix: vacances.prix }] },
+  { formule: wm.titre.replace('Option ', ''), type: c.libelles.navette, quand: wm.trajets.map((t) => `${t.sens} ${t.quand}`).join(' · '), details: wm.securite[0], prix: [{ libelle: wm.unite, prix: wm.prix }] },
+];
+---
+
+<Layout accueil>
+  <section class="accroche cadre" aria-labelledby="titre-accroche">
+    <div class="accroche__texte">
+      <p class="sur">{c.accroche.surtitre}</p>
+      <h1 id="titre-accroche">{c.accroche.titre}</h1>
+      <p class="accroche__sous">{c.accroche.sous_titre}</p>
+      <p class="accroche__p">{c.accroche.texte}</p>
+      <div class="actions">
+        <a class="bouton" href={lienTel}>{c.accroche.bouton_principal} <span aria-hidden="true">→</span></a>
+        <a class="lien-fleche" href="#services">{c.accroche.bouton_secondaire}</a>
+      </div>
+    </div>
+    <div class="accroche__visuel kw-accroche-max">
+      <Photo nom="accroche" prioritaire sizes="(min-width: 64rem) 50vw, 100vw" class="accroche__photo" />
+    </div>
+    <ul class="atouts">
+      {c.accroche.atouts.map((a) => <li>{a}</li>)}
+    </ul>
+  </section>
+
+  <section id="services" class="section cadre" aria-labelledby="titre-services">
+    <header class="tete">
+      <p class="num">01</p>
+      <h2 id="titre-services">{s.titre}</h2>
+      <p class="tete__p">{s.intro}</p>
+    </header>
+
+    <div class="formules">
+      <div class="formules__bloc">
+        <h3>{s.journee.titre}</h3>
+        <p class="formules__sous">{s.journee.sous_titre}</p>
+        <p>{s.journee.intro}</p>
+        {s.journee.offres.map((o) => (
+          <div class="formule">
+            <h4>{o.titre} <span>— {o.accroche}</span></h4>
+            <p>{o.texte}</p>
+            <p class="discret">{o.acces}</p>
+          </div>
+        ))}
+      </div>
+      <div class="formules__bloc">
+        <h3>{s.sejours.titre}</h3>
+        <p class="formules__sous">{s.sejours.sous_titre}</p>
+        <p>{s.sejours.intro}</p>
+        {s.sejours.offres.map((o) => (
+          <div class="formule">
+            <h4>{o.titre} <span>— {o.periode}</span></h4>
+            <p>{o.texte}</p>
+          </div>
+        ))}
+        <ul class="liste-trait">
+          {s.sejours.inclus.map((i) => <li>{i}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="tableau-cadre">
+      <table class="tableau">
+        <caption>{c.libelles.tableau_tarifs}</caption>
+        <thead>
+          <tr><th scope="col">Formule</th><th scope="col">Quand</th><th scope="col">Détails</th><th scope="col">Tarif</th></tr>
+        </thead>
+        <tbody>
+          {lignes.map((l) => (
+            <tr>
+              <th scope="row"><span class="tableau__formule">{l.formule}</span><span class="tableau__type">{l.type}</span></th>
+              <td data-label="Quand">{l.quand}</td>
+              <td data-label="Détails">{l.details}</td>
+              <td data-label="Tarif" class="tableau__prix">
+                {l.prix.map((p) => <span><strong>{p.prix}</strong> {p.libelle}</span>)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="note"><strong>{c.libelles.important}.</strong> {c.reservation.regle}</p>
+
+    <div class="duo">
+      <div>
+        <h3>{wm.titre}</h3>
+        <p class="formules__sous">{wm.slogan}</p>
+        <p>{wm.texte}</p>
+        <ul class="liste-trait">{wm.securite.map((i) => <li>{i}</li>)}</ul>
+        <a class="bouton" href={lienTel}>{wm.bouton} <span aria-hidden="true">→</span></a>
+      </div>
+      <Photo nom="woufmobil" sizes="(min-width: 64rem) 40vw, 90vw" max={800} class="duo__img" />
+    </div>
+
+    <div class="duo duo--inverse">
+      <Video />
+      <div>
+        <h3>{s.sejours.video.titre}</h3>
+        <p>{s.sejours.video.texte}</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="nivillac" class="section section--gris" aria-labelledby="titre-nivillac">
+    <div class="cadre">
+      <header class="tete">
+        <p class="num">02</p>
+        <h2 id="titre-nivillac">{c.nivillac.titre}</h2>
+        <p class="tete__p">{c.nivillac.sous_titre}</p>
+      </header>
+      <ul class="chiffres">
+        {c.nivillac.chiffres.map((ch) => <li><strong>{ch.valeur}</strong><span>{ch.libelle}</span></li>)}
+      </ul>
+      <div class="nivillac">
+        <div class="nivillac__texte">{c.nivillac.paragraphes.map((p) => <p>{p}</p>)}</div>
+        <div class="galerie">
+          <Photo nom="maison" sizes="(min-width: 64rem) 30vw, 50vw" max={800} />
+          <Photo nom="etable" sizes="(min-width: 64rem) 30vw, 50vw" max={800} />
+          <Photo nom="box" sizes="(min-width: 64rem) 30vw, 50vw" max={800} />
+          <Photo nom="verger" sizes="(min-width: 64rem) 30vw, 50vw" max={800} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cadre" aria-labelledby="titre-journee">
+    <header class="tete">
+      <p class="num">03</p>
+      <h2 id="titre-journee">{c.journee_type.titre}</h2>
+      <p class="tete__p">{c.journee_type.intro}</p>
+    </header>
+    <ol class="frise">
+      {c.journee_type.etapes.map((e) => (
+        <li><p class="frise__moment">{e.moment}</p><h3>{e.titre}</h3><p>{e.texte}</p></li>
+      ))}
+    </ol>
+  </section>
+
+  <section id="qui-suis-je" class="section section--gris" aria-labelledby="titre-qui">
+    <div class="cadre qui">
+      <Photo nom="theotine" sizes="(min-width: 64rem) 40vw, 100vw" max={800} class="qui__photo" />
+      <div>
+        <p class="num">04</p>
+        <h2 id="titre-qui">{c.qui.titre}</h2>
+        <p class="tete__p">{c.qui.accroche}</p>
+        {c.qui.paragraphes.map((p) => <p>{p}</p>)}
+        <dl class="cv">
+          <div><dt>{c.qui.formation.titre}</dt><dd>{c.qui.formation.texte}</dd></div>
+          {c.qui.experiences.groupes.map((g) => (
+            <div>
+              <dt>{c.qui.experiences.titre} · {g.titre}</dt>
+              <dd><ul>{g.items.map((i) => <li><span>{i.texte}</span><span>{i.duree}</span></li>)}</ul></dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="temoignages" class="section cadre" aria-labelledby="titre-avis">
+    <header class="tete">
+      <p class="num">05</p>
+      <h2 id="titre-avis">{c.temoignages.titre}</h2>
+      <p class="tete__p">{c.temoignages.intro}</p>
+    </header>
+    <div class="avis">
+      {c.temoignages.items.map((t) => (
+        <figure class="avis__item">
+          <blockquote><p>« {t.citation} »</p></blockquote>
+          <figcaption>
+            <Photo nom={photoTemoignage[t.chien]} sizes="56px" max={400} class="avis__photo" />
+            <span><strong>{t.chien}</strong>{t.prestation}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <section id="contact" class="section contact-section" aria-labelledby="titre-contact">
+    <div class="cadre contact">
+      <div>
+        <p class="num num--clair">06</p>
+        <h2 id="titre-contact">{c.contact.titre}</h2>
+        <p>{c.contact.texte}</p>
+        <p class="contact__grand"><a href={lienTel}>{telAffiche}</a></p>
+        <p>{c.contact.disponibilite}</p>
+        <div class="actions">
+          <a class="bouton bouton--blanc" href={lienTel}>{c.contact.bouton_appel}</a>
+          <a class="bouton bouton--contour-clair" href={lienSms}>{c.contact.bouton_sms}</a>
+          <a class="bouton bouton--contour-clair" href={lienMail}>{c.contact.bouton_email}</a>
+        </div>
+        <p class="contact__adresse">{adresseLigne}</p>
+        <p class="contact__signature">{c.contact.signature}</p>
+      </div>
+      <div class="contact__form">
+        <h3>{c.contact.formulaire.titre}</h3>
+        <p>{c.contact.formulaire.intro}</p>
+        <Formulaire version="v2" bouton="bouton" />
+      </div>
+    </div>
+  </section>
+</Layout>

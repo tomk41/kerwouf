@@ -1,0 +1,231 @@
+---
+import Layout from './Layout.astro';
+import Photo from '../../components/Photo.astro';
+import Video from '../../components/Video.astro';
+import Formulaire from '../../components/Formulaire.astro';
+import { c, lienTel, lienSms, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import { photoTemoignage, type NomPhoto } from '../../lib/images';
+
+const s = c.services;
+// Une photo par étape de la journée type
+const photosEtapes: NomPhoto[] = ['box', 'meute', 'pre', 'verger'];
+const ville = c.site.adresse.ville;
+---
+
+<Layout accueil>
+  <!-- Accroche : page de garde du carnet -->
+  <section class="garde" aria-labelledby="titre-accroche">
+    <div class="page garde__in">
+      <div class="garde__texte">
+        <p class="date">{c.accroche.surtitre} · {ville}</p>
+        <h1 id="titre-accroche">{c.accroche.titre}</h1>
+        <p class="garde__sous">{c.accroche.sous_titre}</p>
+        <p>{c.accroche.texte}</p>
+        <div class="actions">
+          <a class="bouton" href={lienTel}>{c.accroche.bouton_principal}</a>
+          <a class="bouton bouton--papier" href="#journee">{c.journee_type.titre}</a>
+        </div>
+      </div>
+      <figure class="polaroid polaroid--grand kw-accroche-max" style="--r: 2deg">
+        <Photo nom="accroche" prioritaire sizes="(min-width: 64rem) 48vw, 92vw" />
+        <figcaption>{c.accroche.sous_titre}</figcaption>
+      </figure>
+    </div>
+    <ul class="page notes">
+      {c.accroche.atouts.map((a, i) => <li style={`--r: ${[-2, 1.5, -1, 2][i]}deg`}>{a}</li>)}
+    </ul>
+  </section>
+
+  <!-- Journée type : le récit mis en avant -->
+  <section id="journee" class="cahier" aria-labelledby="titre-journee">
+    <div class="page">
+      <header class="cahier__tete">
+        <p class="date">{c.libelles.journee}</p>
+        <h2 id="titre-journee">{c.journee_type.titre}</h2>
+        <p class="chapo">{c.journee_type.intro}</p>
+      </header>
+      <ol class="recit">
+        {c.journee_type.etapes.map((e, i) => (
+          <li class="recit__etape">
+            <p class="recit__heure">{e.moment}</p>
+            <div class="recit__texte">
+              <h3>{e.titre}</h3>
+              <p>{e.texte}</p>
+            </div>
+            <figure class="polaroid polaroid--petit" style={`--r: ${i % 2 ? -3 : 3}deg`}>
+              <Photo nom={photosEtapes[i]} sizes="(min-width: 64rem) 240px, 70vw" max={800} />
+            </figure>
+          </li>
+        ))}
+      </ol>
+      <div class="recit__video">
+        <div class="recit__video-cadre"><Video /></div>
+        <div>
+          <h3>{s.sejours.video.titre}</h3>
+          <p>{s.sejours.video.texte}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services : fiches cartonnées -->
+  <section id="services" class="section" aria-labelledby="titre-services">
+    <div class="page">
+      <header class="tete">
+        <p class="date">{c.libelles.services}</p>
+        <h2 id="titre-services">{s.titre}</h2>
+        <p class="chapo">{s.intro}</p>
+      </header>
+
+      <h3 class="intertitre">{s.sejours.titre} — <span>{s.sejours.sous_titre}</span></h3>
+      <p class="intro-bloc">{s.sejours.intro}</p>
+      <div class="fiches">
+        {s.sejours.offres.map((o) => (
+          <article class="fiche">
+            <p class="fiche__onglet">{o.periode}</p>
+            <h4>{o.titre}</h4>
+            <p>{o.texte}</p>
+            <dl class="fiche__infos">
+              <div><dt>{c.libelles.horaires}</dt><dd>{o.arrivee_depart}</dd></div>
+              <div><dt>{c.libelles.navette_court}</dt><dd>{o.navette}</dd></div>
+            </dl>
+            <p class="tampon"><strong>{o.prix}</strong><span>{o.unite}</span></p>
+          </article>
+        ))}
+      </div>
+      <ul class="liste-crayon">
+        {s.sejours.inclus.map((x) => <li>{x}</li>)}
+      </ul>
+
+      <h3 class="intertitre">{s.journee.titre} — <span>{s.journee.sous_titre}</span></h3>
+      <p class="intro-bloc">{s.journee.intro} <strong>{s.journee.horaires}.</strong></p>
+      <div class="fiches">
+        {s.journee.offres.map((o) => (
+          <article class="fiche">
+            <p class="fiche__onglet">{o.accroche}</p>
+            <h4>{o.titre}</h4>
+            <p>{o.texte}</p>
+            <ul class="liste-crayon">{o.inclus.map((x) => <li>{x}</li>)}</ul>
+            <p class="fiche__acces">{o.acces}</p>
+            <div class="fiche__tarifs">
+              {o.tarifs.map((t) => <p class="tampon tampon--petit"><strong>{t.prix}</strong><span>{t.libelle}</span></p>)}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <article class="billet" aria-labelledby="titre-wm">
+        <div class="billet__gauche">
+          <p class="date">{s.woufmobil.slogan}</p>
+          <h3 id="titre-wm">{s.woufmobil.titre}</h3>
+          <p>{s.woufmobil.texte}</p>
+          <ul class="billet__trajets">
+            {s.woufmobil.trajets.map((t) => <li><strong>{t.sens}</strong> <span>{t.quand}</span></li>)}
+          </ul>
+          <ul class="liste-crayon">{s.woufmobil.securite.map((x) => <li>{x}</li>)}</ul>
+        </div>
+        <div class="billet__droite">
+          <Photo nom="woufmobil" sizes="(min-width: 64rem) 300px, 80vw" max={800} />
+          <p class="tampon"><span>{s.woufmobil.mention_prix}</span><strong>{s.woufmobil.prix}</strong><span>{s.woufmobil.unite}</span></p>
+          <a class="bouton" href={lienTel}>{s.woufmobil.bouton}</a>
+        </div>
+      </article>
+
+      <p class="post-it">{c.reservation.regle}</p>
+    </div>
+  </section>
+
+  <!-- Nivillac : carte postale -->
+  <section id="nivillac" class="section section--lande" aria-labelledby="titre-nivillac">
+    <div class="page nivillac">
+      <div class="nivillac__texte">
+        <p class="date">{c.nivillac.sous_titre}</p>
+        <h2 id="titre-nivillac">{c.nivillac.titre}</h2>
+        {c.nivillac.paragraphes.map((p) => <p>{p}</p>)}
+      </div>
+      <div class="planche">
+        <figure class="polaroid" style="--r: -3deg"><Photo nom="maison" sizes="(min-width: 64rem) 260px, 44vw" max={800} /></figure>
+        <figure class="polaroid" style="--r: 2.5deg"><Photo nom="etable" sizes="(min-width: 64rem) 260px, 44vw" max={800} /></figure>
+        <figure class="polaroid" style="--r: 1.5deg"><Photo nom="box" sizes="(min-width: 64rem) 260px, 44vw" max={800} /></figure>
+        <figure class="polaroid" style="--r: -2deg"><Photo nom="verger" sizes="(min-width: 64rem) 260px, 44vw" max={800} /></figure>
+      </div>
+    </div>
+    <ul class="page releve">
+      {c.nivillac.chiffres.map((ch) => <li><strong>{ch.valeur}</strong> {ch.libelle}</li>)}
+    </ul>
+  </section>
+
+  <!-- Qui suis-je : une lettre -->
+  <section id="qui-suis-je" class="section" aria-labelledby="titre-qui">
+    <div class="page qui">
+      <figure class="polaroid polaroid--portrait" style="--r: -2.5deg">
+        <Photo nom="theotine" sizes="(min-width: 64rem) 400px, 86vw" max={800} />
+        <figcaption>{c.qui.accroche}</figcaption>
+      </figure>
+      <div class="lettre">
+        <h2 id="titre-qui">{c.qui.titre}</h2>
+        {c.qui.paragraphes.map((p) => <p>{p}</p>)}
+        <h3>{c.qui.formation.titre}</h3>
+        <p>{c.qui.formation.texte}</p>
+        <h3>{c.qui.experiences.titre}</h3>
+        <div class="xp">
+          {c.qui.experiences.groupes.map((g) => (
+            <div>
+              <h4>{g.titre}</h4>
+              <ul>{g.items.map((x) => <li>{x.texte} <span>({x.duree})</span></li>)}</ul>
+            </div>
+          ))}
+        </div>
+        <p class="lettre__signature">{c.qui.prenom}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Témoignages : notes épinglées -->
+  <section id="temoignages" class="section section--liege" aria-labelledby="titre-avis">
+    <div class="page">
+      <header class="tete tete--centre">
+        <h2 id="titre-avis">{c.temoignages.titre}</h2>
+        <p class="chapo">{c.temoignages.intro}</p>
+      </header>
+      <div class="tableau-liege">
+        {c.temoignages.items.map((t, i) => (
+          <figure class="note-epinglee" style={`--r: ${[-1.5, 1.2, -0.8][i]}deg`}>
+            <Photo nom={photoTemoignage[t.chien]} sizes="120px" max={400} class="note-epinglee__photo" />
+            <blockquote><p>« {t.citation} »</p></blockquote>
+            <figcaption><strong>{t.chien}</strong> — {t.prestation}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact : carte postale -->
+  <section id="contact" class="section" aria-labelledby="titre-contact">
+    <div class="page carte-postale">
+      <div class="carte-postale__gauche">
+        <p class="date">{c.libelles.contact}</p>
+        <h2 id="titre-contact">{c.contact.titre}</h2>
+        <p>{c.contact.texte}</p>
+        <p class="contact__tel"><a href={lienTel}>{telAffiche}</a></p>
+        <p>{c.contact.disponibilite}</p>
+        <div class="actions">
+          <a class="bouton" href={lienSms}>{c.contact.bouton_sms}</a>
+          <a class="bouton bouton--papier" href={lienMail}>{c.contact.bouton_email}</a>
+        </div>
+        <p class="contact__adresse">{adresseLigne}</p>
+        <p class="post-it post-it--petit">{c.reservation.regle}</p>
+        <div class="contact__polas">
+          <figure class="polaroid polaroid--mini" style="--r: -4deg"><Photo nom="neige" sizes="140px" max={400} /></figure>
+          <figure class="polaroid polaroid--mini" style="--r: 3deg"><Photo nom="riviere" sizes="140px" max={400} /></figure>
+        </div>
+        <p class="lettre__signature">{c.contact.signature}</p>
+      </div>
+      <div class="carte-postale__droite">
+        <h3>{c.contact.formulaire.titre}</h3>
+        <p>{c.contact.formulaire.intro}</p>
+        <Formulaire version="v4" bouton="bouton" />
+      </div>
+    </div>
+  </section>
+</Layout>

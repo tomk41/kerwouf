@@ -41,7 +41,7 @@ export interface Contenu {
   nivillac: { titre: string; sous_titre: string; paragraphes: string[]; chiffres: { valeur: string; libelle: string }[] };
   journee_type: { titre: string; intro: string; etapes: { moment: string; titre: string; texte: string }[] };
   qui: {
-    titre: string; accroche: string; paragraphes: string[];
+    prenom: string; titre: string; accroche: string; paragraphes: string[];
     formation: { titre: string; texte: string };
     experiences: { titre: string; groupes: { titre: string; items: { texte: string; duree: string }[] }[] };
   };
@@ -56,6 +56,11 @@ export interface Contenu {
     };
   };
   merci: { titre: string; texte: string; bouton: string };
+  libelles: {
+    services: string; tableau_tarifs: string; important: string; navette: string;
+    journee: string; contact: string; contact_accroche: string; en_bref: string;
+    horaires: string; navette_court: string;
+  };
   pied_de_page: { mentions: string; confidentialite: string };
 }
 

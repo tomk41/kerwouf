@@ -162,6 +162,7 @@ journee_type:
       texte: "Retour au box, chauffé en hiver, pour une bonne nuit. J’habite juste à côté : je veille sur la petite troupe."
 
 qui:
+  prenom: "Théotine"
   titre: "Qui suis-je ?"
   accroche: "Théotine, passionnée de chiens depuis toujours"
   paragraphes:
@@ -228,6 +229,18 @@ merci:
   titre: "Merci, votre message est bien parti !"
   texte: "Je vous recontacte dès que possible. Pour rappel, votre réservation sera confirmée après un échange par téléphone ou SMS."
   bouton: "Revenir à l’accueil"
+
+libelles:
+  services: "Services & tarifs"
+  tableau_tarifs: "Tarifs et horaires, en un coup d’œil"
+  important: "Important"
+  navette: "Navette Nantes ↔ Nivillac"
+  journee: "Au programme"
+  contact: "Contact & réservation"
+  contact_accroche: "On en parle ?"
+  en_bref: "En bref"
+  horaires: "Horaires"
+  navette_court: "Navette"
 
 pied_de_page:
   mentions: "Mentions légales"

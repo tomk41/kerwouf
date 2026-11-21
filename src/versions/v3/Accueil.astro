@@ -1,0 +1,224 @@
+---
+import Layout from './Layout.astro';
+import Photo from '../../components/Photo.astro';
+import Icone from '../../components/Icone.astro';
+import Video from '../../components/Video.astro';
+import Formulaire from '../../components/Formulaire.astro';
+import { c, lienTel, lienSms, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import { photoTemoignage } from '../../lib/images';
+
+const s = c.services;
+const couleurs = ['corail', 'menthe', 'soleil', 'lilas'];
+---
+
+<Layout accueil>
+  <section class="accroche" aria-labelledby="titre-accroche">
+    <div class="boite accroche__in">
+      <div class="accroche__texte" data-apparait>
+        <p class="badge"><Icone nom="patte" taille={18} />{c.accroche.surtitre}</p>
+        <h1 id="titre-accroche">{c.accroche.titre}</h1>
+        <p class="accroche__sous">{c.accroche.sous_titre}</p>
+        <p>{c.accroche.texte}</p>
+        <div class="actions">
+          <a class="bouton" href={lienTel}><Icone nom="tel" taille={20} />{c.accroche.bouton_principal}</a>
+          <a class="bouton bouton--blanc" href="#services">{c.accroche.bouton_secondaire}</a>
+        </div>
+      </div>
+      <div class="accroche__visuel kw-accroche-max">
+        <svg class="tache tache--1" viewBox="0 0 200 200" aria-hidden="true"><path d="M44 -58C57 -47 67 -32 71 -15C75 2 73 21 64 37C55 53 39 66 20 72C1 78 -21 77 -40 68C-59 59 -75 42 -79 22C-83 2 -75 -21 -62 -37C-49 -53 -31 -62 -12 -66C7 -70 31 -69 44 -58Z" transform="translate(100 100)" /></svg>
+        <svg class="tache tache--2" viewBox="0 0 200 200" aria-hidden="true"><path d="M38 -47C50 -36 60 -24 65 -8C70 8 70 27 61 41C52 55 34 64 15 69C-4 74 -24 75 -41 66C-58 57 -72 38 -74 18C-76 -2 -66 -23 -52 -36C-38 -49 -19 -54 -2 -51C15 -48 26 -58 38 -47Z" transform="translate(100 100)" /></svg>
+        <Photo nom="accroche" prioritaire sizes="(min-width: 64rem) 46vw, 92vw" max={1600} class="accroche__photo" />
+        <p class="autocollant" aria-hidden="true">{c.accroche.atouts[0]}</p>
+      </div>
+    </div>
+    <ul class="boite atouts" aria-label="Les atouts de Ker Wouf">
+      {c.accroche.atouts.map((a, i) => <li class={couleurs[i % 4]} data-apparait><Icone nom="patte" taille={20} />{a}</li>)}
+    </ul>
+  </section>
+
+  <section id="services" class="section section--blanc" aria-labelledby="titre-services">
+    <div class="boite">
+      <header class="tete" data-apparait>
+        <p class="badge badge--menthe">{c.libelles.services}</p>
+        <h2 id="titre-services">{s.titre}</h2>
+        <p>{s.intro}</p>
+      </header>
+
+      <h3 class="sous-tete" data-apparait><span>{s.journee.titre}</span> {s.journee.sous_titre}</h3>
+      <p class="intro-bloc">{s.journee.intro} <strong class="surligne">{s.journee.horaires}</strong></p>
+      <div class="cartes">
+        {s.journee.offres.map((o, i) => (
+          <article class={`carte carte--${i ? 'lilas' : 'soleil'}`} data-apparait>
+            <div class="carte__tete">
+              <span class="carte__icone"><Icone nom={o.id === 'chat' ? 'chat' : 'chien'} taille={34} /></span>
+              <div><h4>{o.titre}</h4><p class="carte__accroche">{o.accroche}</p></div>
+            </div>
+            <p>{o.texte}</p>
+            <ul class="pattes">{o.inclus.map((x) => <li>{x}</li>)}</ul>
+            <p class="petit">{o.acces}</p>
+            <ul class="prix-bulles">
+              {o.tarifs.map((t) => <li><strong>{t.prix}</strong><span>{t.libelle}</span></li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+
+      <h3 class="sous-tete" data-apparait><span>{s.sejours.titre}</span> {s.sejours.sous_titre}</h3>
+      <p class="intro-bloc">{s.sejours.intro}</p>
+      <div class="cartes">
+        {s.sejours.offres.map((o, i) => (
+          <article class={`carte carte--${i ? 'corail' : 'menthe'}`} data-apparait>
+            <p class="badge badge--blanc">{o.periode}</p>
+            <h4>{o.titre}</h4>
+            <p>{o.texte}</p>
+            <p class="ligne"><Icone nom="horloge" taille={20} />{o.arrivee_depart}</p>
+            <p class="ligne"><Icone nom="navette" taille={20} />{o.navette}</p>
+            <p class="sticker"><strong>{o.prix}</strong><span>{o.unite}</span></p>
+          </article>
+        ))}
+      </div>
+      <ul class="bulles" data-apparait>
+        {s.sejours.inclus.map((x) => <li><Icone nom="soleil" taille={22} />{x}</li>)}
+      </ul>
+
+      <div class="video" data-apparait>
+        <div class="video__cadre"><Video /></div>
+        <div>
+          <h3>{s.sejours.video.titre}</h3>
+          <p>{s.sejours.video.texte}</p>
+        </div>
+      </div>
+
+      <article class="woufmobil" data-apparait aria-labelledby="titre-wm">
+        <div>
+          <p class="badge badge--blanc">{s.woufmobil.slogan}</p>
+          <h3 id="titre-wm">{s.woufmobil.titre}</h3>
+          <p>{s.woufmobil.texte}</p>
+          <ul class="trajets">{s.woufmobil.trajets.map((t) => <li><strong>{t.sens}</strong><span>{t.quand}</span></li>)}</ul>
+          <ul class="pattes">{s.woufmobil.securite.map((x) => <li>{x}</li>)}</ul>
+          <a class="bouton bouton--blanc" href={lienTel}><Icone nom="navette" taille={20} />{s.woufmobil.bouton}</a>
+        </div>
+        <div class="woufmobil__visuel">
+          <Photo nom="woufmobil" sizes="(min-width: 64rem) 36vw, 88vw" max={800} class="roule" />
+          <p class="sticker sticker--wm"><span>{s.woufmobil.mention_prix}</span><strong>{s.woufmobil.prix}</strong><span>{s.woufmobil.unite}</span></p>
+        </div>
+      </article>
+
+      <p class="regle" data-apparait><Icone nom="info" taille={24} /><span>{c.reservation.regle}</span></p>
+    </div>
+  </section>
+
+  <section id="nivillac" class="section section--menthe" aria-labelledby="titre-nivillac">
+    <div class="boite">
+      <header class="tete" data-apparait>
+        <p class="badge badge--blanc">{c.nivillac.sous_titre}</p>
+        <h2 id="titre-nivillac">{c.nivillac.titre}</h2>
+      </header>
+      <div class="nivillac">
+        <div class="nivillac__texte" data-apparait>{c.nivillac.paragraphes.map((p) => <p>{p}</p>)}</div>
+        <div class="mosaique" data-apparait>
+          <Photo nom="maison" sizes="(min-width: 64rem) 22vw, 45vw" max={800} class="forme forme--a" />
+          <Photo nom="etable" sizes="(min-width: 64rem) 22vw, 45vw" max={800} class="forme forme--b" />
+          <Photo nom="box" sizes="(min-width: 64rem) 22vw, 45vw" max={800} class="forme forme--c" />
+          <Photo nom="verger" sizes="(min-width: 64rem) 22vw, 45vw" max={800} class="forme forme--d" />
+        </div>
+      </div>
+      <ul class="compteurs">
+        {c.nivillac.chiffres.map((ch, i) => <li class={couleurs[i % 4]} data-apparait><strong>{ch.valeur}</strong><span>{ch.libelle}</span></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--blanc" aria-labelledby="titre-journee">
+    <div class="boite">
+      <header class="tete" data-apparait>
+        <p class="badge badge--soleil">{c.libelles.journee}</p>
+        <h2 id="titre-journee">{c.journee_type.titre}</h2>
+        <p>{c.journee_type.intro}</p>
+      </header>
+      <ol class="chemin">
+        {c.journee_type.etapes.map((e, i) => (
+          <li class={couleurs[i % 4]} data-apparait>
+            <span class="chemin__icone"><Icone nom={['soleil', 'arbre', 'patte', 'lune'][i] as 'soleil'} taille={30} /></span>
+            <p class="chemin__moment">{e.moment}</p>
+            <h3>{e.titre}</h3>
+            <p>{e.texte}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section id="qui-suis-je" class="section section--soleil" aria-labelledby="titre-qui">
+    <div class="boite qui">
+      <div class="qui__visuel" data-apparait>
+        <Photo nom="theotine" sizes="(min-width: 64rem) 40vw, 88vw" max={800} class="forme forme--portrait" />
+      </div>
+      <div data-apparait>
+        <p class="badge badge--blanc">{c.qui.accroche}</p>
+        <h2 id="titre-qui">{c.qui.titre}</h2>
+        {c.qui.paragraphes.map((p) => <p>{p}</p>)}
+        <div class="diplome"><Icone nom="diplome" taille={30} /><div><h3>{c.qui.formation.titre}</h3><p>{c.qui.formation.texte}</p></div></div>
+      </div>
+    </div>
+    <div class="boite">
+      <h3 class="sous-tete sous-tete--centre">{c.qui.experiences.titre}</h3>
+      <div class="xp">
+        {c.qui.experiences.groupes.map((g, i) => (
+          <div class={`xp__carte ${couleurs[(i + 1) % 4]}`} data-apparait>
+            <h4>{g.titre}</h4>
+            <ul>{g.items.map((x) => <li><span>{x.texte}</span><strong>{x.duree}</strong></li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="temoignages" class="section section--blanc" aria-labelledby="titre-avis">
+    <div class="boite">
+      <header class="tete tete--centre" data-apparait>
+        <h2 id="titre-avis">{c.temoignages.titre}</h2>
+        <p>{c.temoignages.intro}</p>
+      </header>
+      <div class="avis">
+        {c.temoignages.items.map((t, i) => (
+          <figure class={`avis__bulle ${couleurs[i % 4]}`} data-apparait>
+            <blockquote><p>« {t.citation} »</p></blockquote>
+            <figcaption>
+              <Photo nom={photoTemoignage[t.chien]} sizes="88px" max={400} class="avis__photo" />
+              <span><strong>{t.chien}</strong>{t.prestation}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section section--corail" aria-labelledby="titre-contact">
+    <div class="boite contact">
+      <div data-apparait>
+        <p class="badge badge--blanc">{c.libelles.contact_accroche}</p>
+        <h2 id="titre-contact">{c.contact.titre}</h2>
+        <p>{c.contact.texte}</p>
+        <p class="gros-tel"><a href={lienTel}><Icone nom="tel" taille={30} />{telAffiche}</a></p>
+        <p class="dispo">{c.contact.disponibilite}</p>
+        <div class="actions">
+          <a class="bouton bouton--marine" href={lienSms}><Icone nom="sms" taille={20} />{c.contact.bouton_sms}</a>
+          <a class="bouton bouton--blanc" href={lienMail}><Icone nom="mail" taille={20} />{c.contact.bouton_email}</a>
+        </div>
+        <p class="adresse"><Icone nom="lieu" taille={20} />{adresseLigne}</p>
+        <div class="polas">
+          <Photo nom="pre" sizes="120px" max={400} class="forme forme--a" />
+          <Photo nom="neige" sizes="120px" max={400} class="forme forme--b" />
+          <Photo nom="riviere" sizes="120px" max={400} class="forme forme--c" />
+        </div>
+        <p class="signature">{c.contact.signature}</p>
+      </div>
+      <div class="formulaire" data-apparait>
+        <h3>{c.contact.formulaire.titre}</h3>
+        <p>{c.contact.formulaire.intro}</p>
+        <Formulaire version="v3" bouton="bouton" />
+      </div>
+    </div>
+  </section>
+</Layout>

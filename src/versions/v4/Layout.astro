@@ -1,0 +1,47 @@
+---
+import Squelette from '../../components/Squelette.astro';
+import Navigation from '../../components/Navigation.astro';
+import Photo from '../../components/Photo.astro';
+import { c, lienTel, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import '@fontsource-variable/caveat';
+import '@fontsource-variable/lora';
+import './styles.css';
+
+interface Props { titre?: string; description?: string; accueil?: boolean }
+const { titre, description, accueil = false } = Astro.props;
+const prefixe = accueil ? '' : '/v4/';
+---
+
+<Squelette n={4} titre={titre ? `${titre} – Ker Wouf` : undefined} description={description} jsonLd={accueil}>
+  <header slot="entete" class="entete">
+    <div class="page entete__in">
+      <a class="marque" href="/v4/">
+        <Photo nom="logo" max={200} sizes="48px" class="marque__logo" alt="" prioritaire />
+        <span>{c.site.nom}</span>
+      </a>
+      <Navigation prefixe={prefixe} />
+      <a class="tampon-tel" href={lienTel} aria-label={`Appeler le ${telAffiche}`}>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+        <span class="tampon-tel__num">{telAffiche}</span>
+      </a>
+    </div>
+  </header>
+
+  <slot />
+
+  <footer slot="pied" class="pied">
+    <div class="page pied__in">
+      <p class="pied__nom">{c.site.nom}</p>
+      <p>{c.site.baseline}</p>
+      <address>
+        {adresseLigne} · <a href={lienTel}>{telAffiche}</a> · <a href={lienMail}>{c.site.email}</a>
+      </address>
+      <p class="pied__liens">
+        <a href="/v4/mentions-legales/">{c.pied_de_page.mentions}</a>
+        <span aria-hidden="true">·</span>
+        <a href="/v4/confidentialite/">{c.pied_de_page.confidentialite}</a>
+      </p>
+      <p class="pied__copy">© 2026 {c.site.nom}</p>
+    </div>
+  </footer>
+</Squelette>

@@ -1,0 +1,15 @@
+---
+import Layout from '../../versions/v3/Layout.astro';
+import { c, lienTel, telAffiche } from '../../lib/contenu';
+---
+
+<Layout titre={c.merci.titre}>
+  <div class="page-texte page-merci">
+    <article class="kw-prose">
+      <h1>{c.merci.titre}</h1>
+      <p>{c.merci.texte}</p>
+      <p><a href={lienTel}>{telAffiche}</a></p>
+      <p><a class="bouton" href="/v3/">{c.merci.bouton}</a></p>
+    </article>
+  </div>
+</Layout>

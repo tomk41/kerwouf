@@ -25,6 +25,8 @@ export interface Photo {
   alt: string;
   /** Qualité WebP (les visuels lourds de Nivillac sont plus compressés). */
   qualite?: number;
+  /** Largeur maximale générée, pour tenir un poids raisonnable. */
+  maxLargeur?: number;
 }
 
 export const photos = {
@@ -54,7 +56,7 @@ export const photos = {
     alt: 'Intérieur d’un box du chenil : un tapis par chien nettoyé régulièrement, une à deux gamelles par chien, des jouets et un sol en béton nettoyé tous les jours',
   },
   verger: {
-    src: verger, qualite: 60,
+    src: verger, qualite: 52, maxLargeur: 1200,
     alt: 'Le verger clôturé de 1 000 m², avec ses pommiers en fleurs et sa grande pelouse',
   },
   theotine: {

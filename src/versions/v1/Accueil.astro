@@ -1,0 +1,236 @@
+---
+import Layout from './Layout.astro';
+import Photo from '../../components/Photo.astro';
+import Icone from '../../components/Icone.astro';
+import Video from '../../components/Video.astro';
+import Formulaire from '../../components/Formulaire.astro';
+import { c, lienTel, lienSms, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import { photoTemoignage } from '../../lib/images';
+
+const s = c.services;
+---
+
+<Layout accueil>
+  <!-- Accroche plein écran, titre posé sur le ciel -->
+  <section class="accroche kw-accroche-max" aria-labelledby="titre-accroche">
+    <Photo nom="accroche" prioritaire sizes="(min-width: 1600px) 1600px, 100vw" class="accroche__photo" />
+    <div class="accroche__ciel">
+      <p class="surtitre">{c.accroche.surtitre}</p>
+      <h1 id="titre-accroche">{c.accroche.titre}</h1>
+      <p class="accroche__sous">{c.accroche.sous_titre}</p>
+    </div>
+    <div class="accroche__actions">
+      <a class="bouton" href={lienTel}><Icone nom="tel" taille={20} />{c.accroche.bouton_principal}</a>
+      <a class="bouton bouton--clair" href="#services">{c.accroche.bouton_secondaire}</a>
+    </div>
+  </section>
+
+  <section class="intro" aria-label={c.libelles.en_bref}>
+    <div class="conteneur intro__in">
+      <p class="intro__texte">{c.accroche.texte}</p>
+      <ul class="atouts">
+        {c.accroche.atouts.map((a) => <li><Icone nom="coeur" taille={18} />{a}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="section" aria-labelledby="titre-services">
+    <div class="conteneur">
+      <header class="section__tete">
+        <p class="surtitre">{c.libelles.services}</p>
+        <h2 id="titre-services">{s.titre}</h2>
+        <p class="chapo">{s.intro}</p>
+      </header>
+
+      <div class="bloc-titre">
+        <h3>{s.journee.titre} <span>· {s.journee.sous_titre}</span></h3>
+        <p>{s.journee.intro}</p>
+        <p class="pastille"><Icone nom="horloge" taille={18} />{s.journee.horaires}</p>
+      </div>
+      <div class="grille-2">
+        {s.journee.offres.map((o) => (
+          <article class="carte">
+            <div class="carte__icone"><Icone nom={o.id === 'chat' ? 'chat' : 'chien'} taille={30} /></div>
+            <h4>{o.titre}</h4>
+            <p class="carte__accroche">{o.accroche}</p>
+            <p>{o.texte}</p>
+            <ul class="coches">
+              {o.inclus.map((i) => <li><Icone nom="check" taille={18} />{i}</li>)}
+            </ul>
+            <p class="carte__petit"><Icone nom="maison" taille={18} />{o.acces}</p>
+            <dl class="tarifs">
+              {o.tarifs.map((t) => <div><dt>{t.libelle}</dt><dd>{t.prix}</dd></div>)}
+            </dl>
+          </article>
+        ))}
+      </div>
+
+      <div class="bloc-titre">
+        <h3>{s.sejours.titre} <span>· {s.sejours.sous_titre}</span></h3>
+        <p>{s.sejours.intro}</p>
+      </div>
+      <div class="grille-2">
+        {s.sejours.offres.map((o) => (
+          <article class="carte carte--sejour">
+            <p class="etiquette">{o.periode}</p>
+            <h4>{o.titre}</h4>
+            <p>{o.texte}</p>
+            <p class="carte__ligne"><Icone nom="horloge" taille={18} />{o.arrivee_depart}</p>
+            <p class="carte__ligne"><Icone nom="navette" taille={18} />{o.navette}</p>
+            <p class="prix"><strong>{o.prix}</strong> {o.unite}</p>
+          </article>
+        ))}
+      </div>
+      <ul class="inclus-sejour">
+        {s.sejours.inclus.map((i) => <li><Icone nom="arbre" taille={20} />{i}</li>)}
+      </ul>
+
+      <div class="video-bloc">
+        <Video class="arrondi" />
+        <div>
+          <h3>{s.sejours.video.titre}</h3>
+          <p>{s.sejours.video.texte}</p>
+        </div>
+      </div>
+
+      <article class="woufmobil" aria-labelledby="titre-wm">
+        <Photo nom="woufmobil" sizes="(min-width: 60rem) 420px, 90vw" max={800} class="woufmobil__img" />
+        <div>
+          <h3 id="titre-wm">{s.woufmobil.titre}</h3>
+          <p class="woufmobil__slogan">{s.woufmobil.slogan}</p>
+          <p>{s.woufmobil.texte}</p>
+          <ul class="trajets">
+            {s.woufmobil.trajets.map((t) => <li><strong>{t.sens}</strong> {t.quand}</li>)}
+          </ul>
+          <p class="prix prix--clair">{s.woufmobil.mention_prix} : <strong>{s.woufmobil.prix}</strong> {s.woufmobil.unite}</p>
+          <ul class="coches coches--clair">
+            {s.woufmobil.securite.map((i) => <li><Icone nom="bouclier" taille={18} />{i}</li>)}
+          </ul>
+          <a class="bouton bouton--clair" href={lienTel}><Icone nom="tel" taille={20} />{s.woufmobil.bouton}</a>
+        </div>
+      </article>
+
+      <p class="regle"><Icone nom="info" taille={22} /><span>{c.reservation.regle}</span></p>
+    </div>
+  </section>
+
+  <!-- Nivillac -->
+  <section id="nivillac" class="section section--sauge" aria-labelledby="titre-nivillac">
+    <div class="conteneur nivillac">
+      <div class="nivillac__texte">
+        <p class="surtitre">{c.nivillac.sous_titre}</p>
+        <h2 id="titre-nivillac">{c.nivillac.titre}</h2>
+        {c.nivillac.paragraphes.map((p) => <p>{p}</p>)}
+      </div>
+      <div class="nivillac__photos">
+        <Photo nom="maison" sizes="(min-width: 60rem) 520px, 90vw" max={800} class="arrondi nivillac__maison" />
+        <Photo nom="etable" sizes="(min-width: 60rem) 260px, 45vw" max={800} class="arrondi" />
+        <Photo nom="box" sizes="(min-width: 60rem) 260px, 45vw" max={800} class="arrondi" />
+      </div>
+    </div>
+    <div class="conteneur">
+      <ul class="chiffres">
+        {c.nivillac.chiffres.map((ch) => <li><strong>{ch.valeur}</strong><span>{ch.libelle}</span></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Journée type -->
+  <section class="section" aria-labelledby="titre-journee">
+    <div class="conteneur journee">
+      <div class="journee__intro">
+        <h2 id="titre-journee">{c.journee_type.titre}</h2>
+        <p class="chapo">{c.journee_type.intro}</p>
+        <Photo nom="verger" sizes="(min-width: 60rem) 360px, 90vw" max={800} class="arrondi journee__photo" />
+      </div>
+      <ol class="etapes">
+        {c.journee_type.etapes.map((e) => (
+          <li>
+            <p class="etapes__moment">{e.moment}</p>
+            <h3>{e.titre}</h3>
+            <p>{e.texte}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Qui suis-je -->
+  <section id="qui-suis-je" class="section section--creme" aria-labelledby="titre-qui">
+    <div class="conteneur qui">
+      <div class="qui__photos">
+        <Photo nom="theotine" sizes="(min-width: 60rem) 480px, 90vw" max={800} class="arrondi" />
+      </div>
+      <div>
+        <p class="surtitre">{c.qui.accroche}</p>
+        <h2 id="titre-qui">{c.qui.titre}</h2>
+        {c.qui.paragraphes.map((p) => <p>{p}</p>)}
+        <div class="formation">
+          <Icone nom="diplome" taille={28} />
+          <div><h3>{c.qui.formation.titre}</h3><p>{c.qui.formation.texte}</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="conteneur">
+      <h3 class="experiences__titre">{c.qui.experiences.titre}</h3>
+      <div class="experiences">
+        {c.qui.experiences.groupes.map((g) => (
+          <div class="experiences__groupe">
+            <h4>{g.titre}</h4>
+            <ul>{g.items.map((i) => <li><span>{i.texte}</span><span class="duree">{i.duree}</span></li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Témoignages -->
+  <section id="temoignages" class="section" aria-labelledby="titre-avis">
+    <div class="conteneur">
+      <header class="section__tete">
+        <h2 id="titre-avis">{c.temoignages.titre}</h2>
+        <p class="chapo">{c.temoignages.intro}</p>
+      </header>
+      <div class="avis">
+        {c.temoignages.items.map((t) => (
+          <figure class="avis__carte">
+            <Photo nom={photoTemoignage[t.chien]} sizes="96px" max={400} class="avis__photo" />
+            <blockquote><p>« {t.citation} »</p></blockquote>
+            <figcaption><strong>{t.chien}</strong><span>{t.prestation}</span></figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section section--sauge" aria-labelledby="titre-contact">
+    <div class="conteneur contact">
+      <div>
+        <p class="surtitre">{c.libelles.contact}</p>
+        <h2 id="titre-contact">{c.contact.titre}</h2>
+        <p>{c.contact.texte}</p>
+        <p class="contact__dispo"><Icone nom="horloge" taille={20} />{c.contact.disponibilite}</p>
+        <div class="contact__boutons">
+          <a class="bouton" href={lienTel}><Icone nom="tel" taille={20} />{c.contact.bouton_appel} · {telAffiche}</a>
+          <a class="bouton bouton--clair" href={lienSms}><Icone nom="sms" taille={20} />{c.contact.bouton_sms}</a>
+          <a class="bouton bouton--clair" href={lienMail}><Icone nom="mail" taille={20} />{c.contact.bouton_email}</a>
+        </div>
+        <p class="contact__adresse"><Icone nom="lieu" taille={20} />{adresseLigne}</p>
+        <p class="regle regle--compacte"><Icone nom="info" taille={22} /><span>{c.reservation.regle}</span></p>
+        <div class="contact__photos">
+          <Photo nom="pre" sizes="160px" max={400} class="arrondi" />
+          <Photo nom="neige" sizes="160px" max={400} class="arrondi" />
+          <Photo nom="riviere" sizes="160px" max={400} class="arrondi" />
+        </div>
+        <p class="signature">{c.contact.signature}</p>
+      </div>
+      <div class="carte carte--form">
+        <h3>{c.contact.formulaire.titre}</h3>
+        <p>{c.contact.formulaire.intro}</p>
+        <Formulaire version="v1" bouton="bouton" />
+      </div>
+    </div>
+  </section>
+</Layout>

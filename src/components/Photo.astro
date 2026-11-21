@@ -20,8 +20,11 @@ interface Props {
 const { nom, sizes = '100vw', prioritaire = false, max = 1600, alt, class: classe, ...rest } = Astro.props;
 const photo = photos[nom];
 const largeurSource = photo.src.width;
-let widths = [400, 800, 1200, 1600].filter((w) => w <= Math.min(largeurSource, max));
-if (widths.length === 0) widths = [Math.min(largeurSource, max)];
+const plafond = Math.min(largeurSource, max, 'maxLargeur' in photo && photo.maxLargeur ? photo.maxLargeur : Infinity);
+let widths = [400, 800, 1200, 1600].filter((w) => w <= plafond);
+// Original plus petit que le plafond : on ajoute sa largeur native (ex. 1148 px)
+if (widths[widths.length - 1] !== plafond && plafond - (widths[widths.length - 1] ?? 0) > 100) widths.push(plafond);
+if (widths.length === 0) widths = [plafond];
 const largeur = widths[widths.length - 1];
 const hauteur = Math.round((photo.src.height / photo.src.width) * largeur);
 const qualite = 'qualite' in photo ? photo.qualite : 78;

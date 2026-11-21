@@ -1,0 +1,65 @@
+---
+import Squelette from '../../components/Squelette.astro';
+import Navigation from '../../components/Navigation.astro';
+import Photo from '../../components/Photo.astro';
+import Icone from '../../components/Icone.astro';
+import { c, lienTel, lienMail, telAffiche, adresseLigne } from '../../lib/contenu';
+import '@fontsource-variable/baloo-2';
+import '@fontsource-variable/nunito';
+import './styles.css';
+
+interface Props { titre?: string; description?: string; accueil?: boolean }
+const { titre, description, accueil = false } = Astro.props;
+const prefixe = accueil ? '' : '/v3/';
+---
+
+<Squelette n={3} titre={titre ? `${titre} – Ker Wouf` : undefined} description={description} jsonLd={accueil}>
+  <header slot="entete" class="entete">
+    <div class="boite entete__in">
+      <a class="marque" href="/v3/">
+        <Photo nom="logo" max={200} sizes="52px" class="marque__logo" alt="" prioritaire />
+        <span>Ker <em>Wouf</em></span>
+      </a>
+      <Navigation prefixe={prefixe} />
+      <a class="bouton bouton--mini" href={lienTel} aria-label={`Appeler le ${telAffiche}`}>
+        <Icone nom="tel" taille={18} /><span class="entete__num">{telAffiche}</span>
+      </a>
+    </div>
+  </header>
+
+  <slot />
+
+  <footer slot="pied" class="pied">
+    <svg class="vague vague--pied" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40c120-30 240-30 360 0s240 30 360 0 240-30 360 0 240 30 360 0v40H0z" /></svg>
+    <div class="boite pied__in">
+      <div>
+        <p class="pied__nom">Ker <em>Wouf</em></p>
+        <p>{c.site.baseline}</p>
+      </div>
+      <address>
+        <p>{adresseLigne}</p>
+        <p><a href={lienTel}>{telAffiche}</a></p>
+        <p><a href={lienMail}>{c.site.email}</a></p>
+      </address>
+      <ul>
+        <li><a href="/v3/mentions-legales/">{c.pied_de_page.mentions}</a></li>
+        <li><a href="/v3/confidentialite/">{c.pied_de_page.confidentialite}</a></li>
+      </ul>
+    </div>
+    <p class="pied__copy">© 2026 {c.site.nom}</p>
+  </footer>
+</Squelette>
+
+<script>
+  // Apparition au défilement, uniquement si l'utilisateur accepte les animations.
+  const ok = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+  if (ok && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('anim');
+    const io = new IntersectionObserver((entrees) => {
+      for (const e of entrees) {
+        if (e.isIntersecting) { e.target.classList.add('vu'); io.unobserve(e.target); }
+      }
+    }, { rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('[data-apparait]').forEach((el) => io.observe(el));
+  }
+</script>
