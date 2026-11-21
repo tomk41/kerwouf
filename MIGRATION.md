@@ -46,12 +46,12 @@ Pour chaque fichier suffixé `-e…` (recadrage WordPress) ou `-scaled`, l'origi
 | `contact-chien-neige-original.jpeg` | Contact (original) | 251 Ko |
 | `contact-labrador-riviere.jpg` | Contact | 275 Ko |
 | `contact-labrador-riviere-original.jpg` | Contact (original) | 645 Ko |
-| `theme-fond-body-new-york.jpg` | Fond `body` du thème, masqué par un calque blanc | 189 Ko |
+| ~~`theme-fond-body-new-york.jpg`~~ | Supprimée lors de la refonte (image de démo du thème) | — |
 
 Points d'attention :
 - **Poids** : les 4 PNG de Nivillac pèsent 10,8 Mo à eux seuls (dont 6 Mo pour `nivillac-montage-photos-fond.png`). À convertir en WebP/AVIF et redimensionner.
 - **Image d'accroche en basse définition** : `hero-fond-balade-etang.jpg` ne fait que 800×600 et aucun original plus grand n'existe. Elle sera floue en plein écran. Il faudra la demander à la propriétaire.
-- **`theme-fond-body-new-york.jpg`** est une image de démo du thème, invisible sur le site. On peut probablement l'abandonner.
+- **`theme-fond-body-new-york.jpg`** était une image de démo du thème, invisible sur le site : supprimée lors de la refonte.
 - Les vignettes des témoignages (500×500) sont agrandies à partir d'originaux de 358 px de large pour Django et Tosca.
 - **Textes alternatifs** : presque tous les `alt` sont vides. Seuls le logo (« Ker Wouf »), `theotine.jpg` (« Théotine ») et `wouf-mobil.png` (« kerwouf mobile ») en ont un.
 - `https://kerwouf.fr/favicon.ico` renvoie le favicon 32×32 en WebP. Il n'y a pas de vrai `.ico`.
