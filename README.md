@@ -113,7 +113,7 @@ On ne travaille **jamais directement sur `main`** : tout ce qui arrive sur `main
 1. **Créer une branche** : `git switch -c texte-tarifs` (ou « Create a new branch » sur GitHub).
 2. **Modifier, puis enregistrer** : `git add -A && git commit -m "Tarifs : …"` puis `git push -u origin texte-tarifs`.
 3. **Ouvrir une pull request** vers `main` sur GitHub. L'autre personne relit les changements (onglet « Files changed »).
-4. **Fusionner (merge)** la pull request. Le workflow « Déploiement bêta » démarre tout seul : construction du site, puis envoi en FTPS dans le dossier `www/beta/` d'OVH. Compter 2 à 3 minutes.
+4. **Fusionner (merge)** la pull request. Le workflow « Déploiement bêta » démarre tout seul : construction du site, puis envoi en FTP dans le dossier `www/beta/` d'OVH. Compter 2 à 3 minutes.
 5. Vérifier sur https://kerwouf.fr/beta/. Le suivi est dans l'onglet **Actions** de GitHub (pastille verte = en ligne).
 
 On peut aussi relancer un déploiement à la main : **Actions → Déploiement bêta → Run workflow**.
@@ -132,7 +132,9 @@ Dans l'espace client OVHcloud : **Web Cloud → Hébergements → (l'hébergemen
 - le **login principal** ;
 - le **mot de passe**. S'il est perdu, utiliser « Modifier le mot de passe » : attention, cela change aussi l'accès FTP habituel, à mettre à jour partout où il sert.
 
-Si le dossier `www/beta/` n'existe pas encore, l'outil de déploiement le crée au premier envoi. On peut aussi le créer avec FileZilla (protocole « FTP explicite sur TLS »).
+Si le dossier `www/beta/` n'existe pas encore, l'outil de déploiement le crée au premier envoi. On peut aussi le créer avec FileZilla (protocole « FTP », chiffrement « FTP simple (non sécurisé) »).
+
+> ℹ️ **FTP non chiffré.** L'offre OVH refuse le FTPS (« 500 This security scheme is not implemented »). Le déploiement utilise donc le FTP simple : le login et le mot de passe circulent en clair. Changer le mot de passe FTP à la fin de la phase bêta, et dès qu'un doute existe.
 
 > ⚠️ **Ne jamais modifier `server-dir` (variable `DOSSIER_FTP`) dans `.github/workflows/deploy.yml` sans vérifier.**
 > Avec le login principal, l'outil peut écrire partout sur l'hébergement. La valeur doit rester exactement `./www/beta/`, avec la barre finale. Une valeur comme `./` ou `./www/` enverrait la bêta par-dessus le site en production. Le workflow contient un garde-fou qui refuse toute autre valeur : ne pas le retirer.

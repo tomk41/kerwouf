@@ -1,4 +1,4 @@
-# Déploiement de la bêta sur https://kerwouf.fr/beta/ (hébergement mutualisé OVH, FTPS)
+# Déploiement de la bêta sur https://kerwouf.fr/beta/ (hébergement mutualisé OVH, FTP)
 # Déclenché à chaque push sur main, ou à la main depuis l'onglet Actions.
 # Ne touche QUE le dossier www/beta/. Le WordPress actuel (reste de www/) n'est jamais modifié.
 # Utilise le login FTP principal de l'hébergement (pas d'utilisateur FTP secondaire chez OVH).
@@ -27,11 +27,11 @@ jobs:
       DOSSIER_FTP: ./www/beta/
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Node 22 : Astro 7 ne fonctionne plus sous Node 20 (fin de vie en avril 2026).
       - name: Installer Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -55,13 +55,15 @@ jobs:
         run: |
           test "$DOSSIER_FTP" = "./www/beta/" || { echo "::error::server-dir doit être ./www/beta/ (reçu : $DOSSIER_FTP)"; exit 1; }
 
-      - name: Envoyer dist/ vers www/beta/ (FTPS)
+      - name: Envoyer dist/ vers www/beta/ (FTP)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
+          # FTP simple : l'offre OVH refuse le FTPS (« 500 This security scheme is not implemented »).
+          # Les identifiants circulent en clair : changer le mot de passe FTP après la phase bêta.
+          protocol: ftp
           port: 21
           # Seul le site construit est envoyé : jamais les sources du dépôt.
           local-dir: ./dist/
